@@ -1,25 +1,12 @@
-# Slim 3 application skeleton
+# Xavier - Robot 
 
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/297ce2e4-166d-45d5-8d11-ae0651a8c7ac/mini.png)](https://insight.sensiolabs.com/projects/297ce2e4-166d-45d5-8d11-ae0651a8c7ac) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/awurth/slim-base/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/awurth/slim-base/?branch=master)
 
-This is an app skeleton for the Slim PHP Micro-Framework to get started quickly
 
-## Features
-- [Eloquent ORM](https://github.com/illuminate/database)
-- Flash messages ([Slim Flash](https://github.com/slimphp/Slim-Flash))
-- CSRF protection ([Slim Csrf](https://github.com/slimphp/Slim-Csrf)) with fields rendering with a twig function
-- Authentication ([Sentinel](https://github.com/cartalyst/sentinel))
-- Validation ([Respect](https://github.com/Respect/Validation) + [Slim Validation](https://github.com/awurth/slim-validation))
-- Twig templating engine [Slim Twig View](https://github.com/slimphp/Twig-View) with cache and debug
-- CSS Framework [Semantic UI](https://github.com/Semantic-Org/Semantic-UI)
-- A **Gulpfile** with a watcher for *SASS* and *JS* files, and minification
-- Helpers for assets management, redirections, ...
-- Logs ([Monolog](https://github.com/Seldaek/monolog))
-- Dotenv configuration
-- Console commands for updating the database schema or creating users
-- Functionnal tests base ([PHPUnit](https://github.com/sebastianbergmann/phpunit))
 
-For more information, check out the project's [website](http://awurth.fr/doc/boilerplate/slim) or the [wiki](https://github.com/awurth/slim-base/wiki).
+
+
+
+
 
 ## Installation
 ### Create the project using Composer

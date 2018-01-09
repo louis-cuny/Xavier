@@ -1,14 +1,16 @@
 {
-    "name": "awurth/slim-base",
-    "description": "Slim PHP Micro-Framework skeleton",
-    "keywords": ["slim", "eloquent", "twig", "semantic", "framework", "boilerplate", "skeleton"],
-    "homepage": "https://github.com/awurth/Slim",
-    "license": "MIT",
+    "name": "louis-cuny/Xavier",
+    "description": "Xavier - Robot",
+    "homepage": "https://github.com/louis-cuny/Xavier",
     "authors": [
         {
-            "name": "Alexis Wurth",
-            "email": "awurth.dev@gmail.com",
-            "homepage": "https://github.com/awurth"
+            "name": "Louis Cuny",
+            "email": "louis-cuny@orange.fr",
+            "homepage": "https://github.com/louis-cuny"
+        },{
+            "name": "Luc Andre"
+        },{
+            "name": "Allan Demarbre"
         }
     ],
     "autoload": {
