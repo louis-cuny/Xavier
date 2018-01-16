@@ -22,6 +22,5 @@
     "pump": "^1.0.3"
   },
   "dependencies": {
-    "semantic-ui": "^2.2.13"
   }
 }

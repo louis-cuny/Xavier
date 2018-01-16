@@ -4,14 +4,10 @@
 
 
 
-
-
-
-
 ## Installation
 ### Create the project using Composer
 ``` bash
-$ composer create-project awurth/slim-base [project-name]
+$ composer install
 ```
 
 ### Setup environment variables
