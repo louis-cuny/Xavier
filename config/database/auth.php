@@ -15,7 +15,7 @@ Manager::schema()->create('user', function (Blueprint $table) {
     $table->string('last_name')->nullable();
     $table->string('first_name')->nullable();
     $table->text('permissions');
-    $table->timestamp('last_login');
+    $table->timestamp('last_login')->nullable();
     $table->timestamps();
 });
 

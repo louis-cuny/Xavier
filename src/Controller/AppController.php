@@ -12,4 +12,9 @@ class AppController extends Controller
     {
         return $this->twig->render($response, 'app/home.twig');
     }
+
+    public function profile(Request $request, Response $response)
+    {
+        return $this->twig->render($response, 'app/profile.twig');
+    }
 }
