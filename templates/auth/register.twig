@@ -25,6 +25,11 @@
                     <input type="password" name="password_confirm" id="inputPasswordConfirm"
                            class="form-control{% if has_error('password_confirm') %} has-error has-feedback{% endif %}"
                            placeholder="Confirm password" required>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="admin" name="admin"> Admin account
+                        </label>
+                    </div>
                     {{ csrf() }}
                     <button value="Register" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
                     {% if has_errors() %}

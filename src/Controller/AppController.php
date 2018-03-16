@@ -17,4 +17,9 @@ class AppController extends Controller
     {
         return $this->twig->render($response, 'app/profile.twig');
     }
+
+    public function dashboard(Request $request, Response $response)
+    {
+        return $this->twig->render($response, 'app/dashboard.twig');
+    }
 }

@@ -42,6 +42,7 @@ class AuthController extends Controller
             $username = $request->getParam('username');
             $email = $request->getParam('email');
             $password = $request->getParam('password');
+            $admin = $request->getParam('admin') ? true : false;
             $this->validator->request($request, [
                 'username' => V::length(3, 25)->alnum('_')->noWhitespace(),
                 'email' => V::noWhitespace()->email(),
@@ -66,7 +67,7 @@ class AuthController extends Controller
             }
             if ($this->validator->isValid()) {
                 /** @var \Cartalyst\Sentinel\Roles\EloquentRole $role */
-                $role = $this->auth->findRoleByName('User');
+                $role = $admin ? $this->auth->findRoleByName('Admin') : $this->auth->findRoleByName('User');
                 $user = $this->auth->registerAndActivate([
                     'username' => $username,
                     'email' => $email,

@@ -14,3 +14,7 @@ $app->get('/logout', 'auth.controller:logout')
 $this->map(['GET', 'POST'], '/profile', 'app.controller:profile')
     ->add($container['auth.middleware']())
     ->setName('profile');
+
+$app->get('/dashboard', 'app.controller:dashboard')
+    ->add($container['auth.middleware']())
+    ->setName('dashboard');
