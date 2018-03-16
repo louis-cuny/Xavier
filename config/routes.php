@@ -10,3 +10,7 @@ $app->group('', function () {
 $app->get('/logout', 'auth.controller:logout')
     ->add($container['auth.middleware']())
     ->setName('logout');
+
+$this->map(['GET', 'POST'], '/profile', 'app.controller:profile')
+    ->add($container['auth.middleware']())
+    ->setName('profile');
