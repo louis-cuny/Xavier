@@ -9,7 +9,7 @@ $sentinel = (new Sentinel(new SentinelBootstrapper(__DIR__.'/../sentinel.php')))
 
 Manager::schema()->create('user', function (Blueprint $table) {
     $table->increments('id');
-    //$table->string('username')->unique();  No use
+    $table->string('username')->unique();
     $table->string('email')->unique();
     $table->string('password');
     //$table->string('last_name')->nullable();
