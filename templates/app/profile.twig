@@ -2,8 +2,38 @@
 
 {% block body %}
 
+<script src="{{ asset('assets/js/dropzone.js') }}"></script>
+
 <div class="container">
-    <h1>Profile page</h1>
+    <h1>{{ auth.user.username }}'s profile page</h1>
+    <br>
+
+    <h2>My videos</h2>
+    <!-- Display videos here -->
+    <br>
+
+    <h2>Upload a new video</h2>
+    <form id="upload" action="{{ path_for('upload') }}" class="dropzone" method="post">
+        <input type="hidden" name="{{nameKey}}" value="{{name}}">
+        <input type="hidden" name="{{valueKey}}" value="{{value}}">
+        
+        <div class="fallback">
+            <input name="file" type="file" multiple />
+        </div>
+    </form>
+
+    <script>
+        // Setting Dropzone.js options
+        Dropzone.options.upload = 
+        {
+            paramName: "file", // The name that will be used to transfer the file
+            maxFilesize: 100, // MB
+            acceptedFiles: 'video/*',
+            accept: function(file, done) {
+                done();
+            }
+        };
+    </script>
 </div>
 
 {% endblock %}

@@ -11,7 +11,11 @@ $app->get('/logout', 'auth.controller:logout')
     ->add($container['auth.middleware']())
     ->setName('logout');
 
-$this->map(['GET', 'POST'], '/profile', 'app.controller:profile')
-     ->add($container['auth.middleware']())
-     ->setName('profile');
+$app->get('/profile', 'app.controller:profile')
+    ->add($container['auth.middleware']())
+    ->setName('profile');
+
+$app->post('/upload', 'app.controller:upload')
+    ->add($container['auth.middleware']())
+    ->setName('upload');
 
