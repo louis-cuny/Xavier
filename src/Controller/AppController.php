@@ -55,4 +55,9 @@ class AppController extends Controller
         // Redirect / render profile page
         return $this->twig->render($response, 'app/profile.twig');
     }
+
+    public function dashboard(Request $request, Response $response)
+    {
+        return $this->twig->render($response, 'app/dashboard.twig');
+    }
 }

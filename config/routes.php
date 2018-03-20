@@ -19,3 +19,6 @@ $app->post('/upload', 'app.controller:upload')
     ->add($container['auth.middleware']())
     ->setName('upload');
 
+$app->get('/dashboard', 'app.controller:dashboard')
+    ->add($container['auth.middleware']())
+    ->setName('dashboard');

@@ -1,55 +1,51 @@
 {% extends 'layout.twig' %}
 
 {% block body %}
-
-<div class="container">
-    <div class="column">
-        <h2 class="ui teal header">
-            <i class="user icon"></i> Create a new account
-        </h2>
-        <form class="ui large form error" action="{{ path_for('register') }}" method="POST">
-            <div class="ui stacked segment">
-                <div class="field{% if has_error('username') %} error{% endif %}">
-                    <div class="ui left icon input">
-                        <i class="user icon"></i>
-                        <input type="text" name="username" placeholder="Username" value="{{ val('username') }}">
+    <div class="jumbotron">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 col-lg-5 col-xl-4">
+                <form class="form-signin" action="{{ path_for('register') }}" method="POST">
+                    <h2 class="form-signin-heading">Create a new account</h2>
+                    <label for="username" class="sr-only">Email address</label>
+                    <input type="username" id="username" name="username"
+                           class="form-control{% if has_error('username') %} has-error has-feedback{% endif %}"
+                           placeholder="Username"
+                           required>
+                    <label for="email" class="sr-only">Email address</label>
+                    <input type="email" id="email" name="email"
+                           class="form-control{% if has_error('email') %} has-error has-feedback{% endif %}"
+                           placeholder="Email"
+                           required>
+                    <label for="inputPassword" class="sr-only">Password</label>
+                    <input type="password" name="password" id="inputPassword"
+                           class="form-control{% if has_error('password') %} has-error has-feedback{% endif %}"
+                           placeholder="Password" required>
+                    <label for="inputPasswordConfirm" class="sr-only">Password</label>
+                    <input type="password" name="password_confirm" id="inputPasswordConfirm"
+                           class="form-control{% if has_error('password_confirm') %} has-error has-feedback{% endif %}"
+                           placeholder="Confirm password" required>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="admin" name="admin"> Admin account
+                        </label>
                     </div>
+                    {{ csrf() }}
+                    <button value="Register" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+                    {% if has_errors() %}
+                        <div>
+                            {% for paramErrors in errors() %}
+                                {% for error in paramErrors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </form>
+                <div>
+                    You already have an account? <a href="{{ path_for('login') }}">Log in</a>
                 </div>
-                <div class="field{% if has_error('email') %} error{% endif %}">
-                    <div class="ui left icon input">
-                        <i class="mail icon"></i>
-                        <input type="email" name="email" placeholder="Email" value="{{ val('email') }}">
-                    </div>
-                </div>
-                <div class="field{% if has_error('password') %} error{% endif %}">
-                    <div class="ui left icon input">
-                        <i class="lock icon"></i>
-                        <input type="password" name="password" placeholder="Password">
-                    </div>
-                </div>
-                <div class="field{% if has_error('password_confirm') %} error{% endif %}">
-                    <div class="ui left icon input">
-                        <i class="lock icon"></i>
-                        <input type="password" name="password_confirm" placeholder="Confirm password">
-                    </div>
-                </div>
-                {{ csrf() }}
-                <input type="submit" class="ui fluid large teal button" value="Register">
             </div>
-            {% if has_errors() %}
-                <div class="ui error message">
-                    {% for paramErrors in errors() %}
-                        {% for error in paramErrors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </form>
-        <div class="ui message">
-            You already have an account? <a href="{{ path_for('login') }}">Sign in</a>
         </div>
     </div>
-</div>
-
 {% endblock %}
