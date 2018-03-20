@@ -10,6 +10,7 @@ $sentinel = (new Sentinel(new SentinelBootstrapper(__DIR__.'/../sentinel.php')))
 // Your application's tables
 Manager::schema()->create('video', function (Blueprint $table) {
     $table->increments('id');
+    $table->string('name');
     $table->string('link');
     $table->unsignedInteger('user_id');    
     $table->foreign('user_id')->references('id')->on('user');
