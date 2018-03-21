@@ -9,7 +9,24 @@
     <br>
 
     <h2>My videos</h2>
-    <!-- Display videos here -->
+
+    {% if videos %}
+        {% for v in videos %}
+            <div class="card">
+                <h5 class="card-header">{{ v.name }}</h5>
+                <div class="card-body">
+                    <h5 class="card-title">This video's sequences</h5>
+                    <p class="card-text">No sequence yet</p>
+                    <a href="#" class="btn btn-primary">Create a sequence</a>
+                </div>
+            </div>
+
+            <br>
+        {% endfor %}
+    {% else %}
+        <p>No video uploaded yet</p>
+    {% endif %}
+    
     <br>
 
     <h2>Upload a new video</h2>
@@ -18,20 +35,21 @@
         <input type="hidden" name="{{valueKey}}" value="{{value}}">
         
         <div class="fallback">
-            <input name="file" type="file" multiple />
+            <input name="file" type="file"/>
         </div>
     </form>
+
+    <br>
 
     <script>
         // Setting Dropzone.js options
         Dropzone.options.upload = 
         {
             paramName: "file", // The name that will be used to transfer the file
+            renameFile: () => { return "video"},
             maxFilesize: 100, // MB
             acceptedFiles: 'video/*',
-            accept: function(file, done) {
-                done();
-            }
+            maxFiles: 1
         };
     </script>
 </div>

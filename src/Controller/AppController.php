@@ -7,6 +7,8 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Http\UploadedFile;
 
+use App\Model\Video;
+
 class AppController extends Controller
 {
     public function home(Request $request, Response $response)
@@ -19,12 +21,26 @@ class AppController extends Controller
         $nameKey = $this->csrf->getTokenNameKey();
         $valueKey = $this->csrf->getTokenValueKey();
 
+        $user_id = $this->auth->getUser()->id;
+
+        $videos = Video::where('user_id', '=', $user_id)->get();
+        $videos_data = [];
+        foreach($videos as $v)
+        {
+            $current_vid = [
+                "name" => $v->name
+            ];
+
+            array_push($videos_data, $current_vid);
+        }
+
         $data = 
         [
             "nameKey" => $nameKey,
             "valueKey" => $valueKey,
             "name" => $request->getAttribute($nameKey),
-            "value" => $request->getAttribute($valueKey)    
+            "value" => $request->getAttribute($valueKey),
+            "videos" => $videos_data
         ];
 
         return $this->twig->render($response, 'app/profile.twig', $data);
@@ -37,22 +53,25 @@ class AppController extends Controller
         if (empty($files['file'])) 
         {
             throw new Exception('Expected a newfile');
-            $response->withStatus(400);
         }
 
         $newfile = $files['file'];
 
+        $video_nb = Video::all()->count() + 1;
+
         // Save file to server
         if ($newfile->getError() === UPLOAD_ERR_OK) {
-            $uploadFileName = $newfile->getClientFilename();
-            $newfile->moveTo( "assets/videos/$uploadFileName" );
-        }
-        else
-        {
-            $response->withStatus(401);
+            $uploadFileName = $newfile->getClientFilename() . $video_nb;
+            $newfile->moveTo("assets/videos/$uploadFileName");
         }
 
-        // Redirect / render profile page
+        $new_video = new Video;
+        $new_video->link = "assets/videos/$uploadFileName";
+        $new_video->name = "$uploadFileName";
+        $new_video->user_id = $this->auth->getUser()->id;
+
+        $new_video->save();
+
         return $this->twig->render($response, 'app/profile.twig');
     }
 
