@@ -6,7 +6,7 @@
 <script src="{{ asset('assets/js/jquery-3.3.1.min') }}"></script>
 
 <div class="container">
-    <h1>{{ auth.user.username }}'s profile page</h1>
+    <h1>{{ auth.user.username }}'s profile</h1>
     <br>
 
     <h2>My videos</h2>
@@ -23,7 +23,7 @@
                     </button>
 
                     <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                        <button class="dropdown-item">Change name</button>                    
+                        <button class="dropdown-item" data-toggle="modal" data-target="#renameVideo" data-link="{{ path_for("renameVideo", {"id": v.id}) }}">Edit name</button>                    
                         <button class="dropdown-item" data-toggle="modal" data-target="#deleteModal" data-link="{{ path_for("deleteVideo", {"id": v.id}) }}">Delete video</button>
                     </div>
                 </div>
@@ -32,7 +32,7 @@
                 
                 <div class="card-body">
                     <h5 class="card-title">This video's sequences</h5>
-                    <p class="card-text">No sequence yet</p>
+                    <p class="card-text">No sequences yet</p>
                     <a href="#" class="btn btn-primary">Create a sequence</a>
                 </div>
             </div>
@@ -80,6 +80,35 @@
         </div>
     </div>
 
+    <!-- Modal when trying to edit the name of a video -->
+    <div class="modal fade" id="renameVideo" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Rename warning</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form class="rename-form" action="" method="post">
+                    <input type="hidden" name="{{nameKey}}" value="{{name}}">
+                    <input type="hidden" name="{{valueKey}}" value="{{value}}">
+                    
+                    <div class="modal-body">
+                        How would you like to rename this video ?
+                        <input class="form-control" name="newName" value="" placeholder="Your video name" required>
+                    </div>
+                
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success rename-btn" style="color: white">Confirm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Setting Dropzone.js options
         Dropzone.options.upload = 
@@ -98,6 +127,14 @@
                 
                 let modal = $(this)
                 modal.find('.delete-btn').attr("href", recipient)
+            });
+
+            $('#renameVideo').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget)
+                let recipient = button.data('link') 
+                
+                let modal = $(this)
+                modal.find('.rename-form').attr("action", recipient)
             });
         });
     </script>

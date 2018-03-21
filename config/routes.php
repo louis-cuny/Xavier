@@ -23,6 +23,10 @@ $app->get('/delete/video/{id}', 'app.controller:deleteVideo')
     ->add($container['auth.middleware']())
     ->setName('deleteVideo');
 
+$app->post('/rename/video/{id}', 'app.controller:renameVideo')
+    ->add($container['auth.middleware']())
+    ->setName('renameVideo');
+
 $app->get('/dashboard', 'app.controller:dashboard')
     ->add($container['auth.middleware']())
     ->setName('dashboard');

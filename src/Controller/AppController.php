@@ -102,6 +102,32 @@ class AppController extends Controller
         return $this->redirect($response, 'profile');      
     }
 
+    public function renameVideo(Request $request, Response $response, $id)
+    {
+        if($user = $this->auth->getUser())
+        {
+            $video = Video::find($id);
+
+            if($video && $video->user->id === $user->id)
+            {
+                $video->name = $request->getParsedBody()['newName'];
+                $video->update();
+
+                $this->flash('success', 'The video has been renamed successfully.');                
+            }
+            else
+            {
+                $this->flash('danger', 'The video you are trying to rename does not seem to exist.');                
+            }
+        }
+        else 
+        {
+            $this->flash('danger', 'The video you are trying to rename does not seem to belong to you.');                            
+        }
+
+        return $this->redirect($response, 'profile');              
+    }
+
     public function dashboard(Request $request, Response $response)
     {
         return $this->twig->render($response, 'app/dashboard.twig');
