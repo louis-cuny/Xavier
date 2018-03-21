@@ -59,17 +59,16 @@ class AppController extends Controller
 
         $newfile = $files['file'];
 
-        $video_nb = Video::all()->count() + 1;
+        $video_name = uniqid() ;
 
         // Save file to server
         if ($newfile->getError() === UPLOAD_ERR_OK) {
-            $uploadFileName = $newfile->getClientFilename() . $video_nb;
-            $newfile->moveTo("assets/videos/$uploadFileName");
+            $newfile->moveTo("assets/videos/$video_name");
         }
 
         $new_video = new Video;
-        $new_video->link = "assets/videos/$uploadFileName";
-        $new_video->name = "$uploadFileName";
+        $new_video->link = "assets/videos/$video_name";
+        $new_video->name = "New video";
         $new_video->user_id = $this->auth->getUser()->id;
 
         $new_video->save();
