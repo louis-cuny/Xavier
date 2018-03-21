@@ -16,16 +16,17 @@
             <div class="card">
                 <h5 class="card-header">
                     {{ v.name }} 
-                    <div class="btn-group" role="group">
-                        <button id="btnGroupDrop1" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Edit
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                            <button class="dropdown-item">Change name</button>                    
-                            <button class="dropdown-item" data-toggle="modal" data-target="#deleteModal" data-link="{{ path_for("deleteVideo", {"id": v.id}) }}">Delete video</button>
-                        </div>
-                    </div>
 
+                <div class="btn-group" role="group">
+                    <button id="btnGroupDrop1" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-pencil"></i>
+                    </button>
+
+                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                        <button class="dropdown-item">Change name</button>                    
+                        <button class="dropdown-item" data-toggle="modal" data-target="#deleteModal" data-link="{{ path_for("deleteVideo", {"id": v.id}) }}">Delete video</button>
+                    </div>
+                </div>
                    
                 </h5>
                 
