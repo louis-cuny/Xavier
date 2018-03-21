@@ -110,7 +110,7 @@ class AppController extends Controller
 
             if($video && $video->user->id === $user->id)
             {
-                $video->name = $request->getParsedBody()['newName'];
+                $video->name = addslashes($request->getParsedBody()['newName']);
                 $video->update();
 
                 $this->flash('success', 'The video has been renamed successfully.');                
