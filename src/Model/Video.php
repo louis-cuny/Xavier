@@ -2,9 +2,9 @@
 
 namespace App\Model;
 
-use Cartalyst\Sentinel\Users\EloquentUser;
+use Illuminate\Database\Eloquent\Model;
 
-class Video extends EloquentUser
+class Video extends Model
 {
     protected $table = 'video';
     protected $primaryKey = 'id';
@@ -15,4 +15,9 @@ class Video extends EloquentUser
         'link',
         'name'
     ];
+
+    public function user()
+	{
+		return $this->belongsTo('App\Model\User', 'user_id');
+	}
 }

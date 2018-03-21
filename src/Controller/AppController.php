@@ -8,6 +8,7 @@ use Slim\Http\Response;
 use Slim\Http\UploadedFile;
 
 use App\Model\Video;
+use App\Model\User;
 
 class AppController extends Controller
 {
@@ -28,6 +29,7 @@ class AppController extends Controller
         foreach($videos as $v)
         {
             $current_vid = [
+                "id" => $v->id,
                 "name" => $v->name
             ];
 
@@ -73,6 +75,32 @@ class AppController extends Controller
         $new_video->save();
 
         return $this->twig->render($response, 'app/profile.twig');
+    }
+
+    public function deleteVideo(Request $request, Response $response, $id)
+    {
+        if($user = $this->auth->getUser())
+        {
+            $video = Video::find($id);
+
+            if($video && $video->user->id === $user->id)
+            {
+                unlink($video->link);
+                $video->delete();
+
+                $this->flash('success', 'The video has been deleted successfully.');                
+            }
+            else
+            {
+                $this->flash('danger', 'The video you are trying to delete does not seem to exist.');                
+            }
+        }
+        else 
+        {
+            $this->flash('danger', 'The video you are trying to delete does not seem to belong to you.');                            
+        }
+
+        return $this->redirect($response, 'profile');      
     }
 
     public function dashboard(Request $request, Response $response)

@@ -19,6 +19,10 @@ $app->post('/upload', 'app.controller:upload')
     ->add($container['auth.middleware']())
     ->setName('upload');
 
+$app->get('/delete/video/{id}', 'app.controller:deleteVideo')
+    ->add($container['auth.middleware']())
+    ->setName('deleteVideo');
+
 $app->get('/dashboard', 'app.controller:dashboard')
     ->add($container['auth.middleware']())
     ->setName('dashboard');
