@@ -1,13 +1,12 @@
 {
-  "name": "slim-base",
-  "version": "4.0.0",
-  "description": "Slim PHP Micro-Framework skeleton",
+  "name": "Xavier",
+  "version": "1.0.0",
+  "description": "Xavier le robot",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/awurth/Slim.git"
+    "url": "git+https://github.com/louis-cuny/Xavier.git"
   },
-  "license": "MIT",
-  "homepage": "https://github.com/awurth/Slim#readme",
+  "homepage": "https://github.com/louis-cuny/Xavier#readme",
   "devDependencies": {
     "babel-preset-env": "^1.6.1",
     "gulp": "^3.9.1",

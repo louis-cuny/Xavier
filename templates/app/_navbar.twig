@@ -2,13 +2,19 @@
     <div class="container">
         <a class="navbar-brand" href="{{ path_for('home') }}">Xavier</a>
         <div class="pull-right">
-            <button class="navbar-toggler pull-right" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+            <button class="navbar-toggler pull-right" type="button" data-toggle="collapse"
+                    data-target="#navbarsExampleDefault"
                     aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarsExampleDefault">
                 <ul class="navbar-nav mr-auto">
                     {% if auth.check() %}
+                        {% if auth.inRole('admin') %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path_for('profile') }}">Profile</a>
+                            </li>
+                        {% endif %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path_for('logout') }}">Log out</a>
                         </li>
@@ -25,24 +31,3 @@
         </div>
     </div>
 </nav>
-
-{#
-<nav class="ui borderless top fixed menu">
-    <a href="{{ path_for('home') }}" class="header item">Slim Skeleton</a>
-    <div class="right menu">
-        {% if auth.check() %}
-            <div class="header item">{{ auth.user.username }}</div>
-            <div class="item">
-                <a href="{{ path_for('logout') }}" class="ui teal circular button">Logout</a>
-            </div>
-        {% else %}
-            <div class="item">
-                <a href="{{ path_for('login') }}" class="ui circular button">Login</a>
-            </div>
-            <div class="item">
-                <a href="{{ path_for('register') }}" class="ui teal circular button">Register</a>
-            </div>
-        {% endif %}
-    </div>
-</nav>
-#}

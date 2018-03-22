@@ -8,6 +8,10 @@ use Respect\Validation\Validator as V;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
+/**
+ * @property \Awurth\SlimValidation\Validator validator
+ * @property \Cartalyst\Sentinel\Sentinel auth
+ */
 class AuthController extends Controller
 {
     public function login(Request $request, Response $response)
@@ -18,11 +22,9 @@ class AuthController extends Controller
                 'password' => $request->getParam('password')
             ];
             $remember = $request->getParam('remember') ? true : false;
-
             try {
                 if ($this->auth->authenticate($credentials, $remember)) {
                     $this->flash('success', 'You are now logged in.');
-
                     return $this->redirect($response, 'home');
                 } else {
                     $this->validator->addError('auth', 'Bad username or password');
@@ -31,8 +33,7 @@ class AuthController extends Controller
                 $this->validator->addError('auth', 'Too many attempts!');
             }
         }
-
-        return $this->twig->render($response, 'auth/login.twig');
+        return $this->render($response, 'auth/login.twig');
     }
 
     public function register(Request $request, Response $response)
@@ -41,7 +42,7 @@ class AuthController extends Controller
             $username = $request->getParam('username');
             $email = $request->getParam('email');
             $password = $request->getParam('password');
-
+            $admin = $request->getParam('admin') ? true : false;
             $this->validator->request($request, [
                 'username' => V::length(3, 25)->alnum('_')->noWhitespace(),
                 'email' => V::noWhitespace()->email(),
@@ -58,18 +59,15 @@ class AuthController extends Controller
                     ]
                 ]
             ]);
-
             if ($this->auth->findByCredentials(['login' => $username])) {
                 $this->validator->addError('username', 'This username is already used.');
             }
-
             if ($this->auth->findByCredentials(['login' => $email])) {
                 $this->validator->addError('email', 'This email is already used.');
             }
-
             if ($this->validator->isValid()) {
-                $role = $this->auth->findRoleByName('User');
-
+                /** @var \Cartalyst\Sentinel\Roles\EloquentRole $role */
+                $role = $admin ? $this->auth->findRoleByName('Admin') : $this->auth->findRoleByName('User');
                 $user = $this->auth->registerAndActivate([
                     'username' => $username,
                     'email' => $email,
@@ -78,22 +76,17 @@ class AuthController extends Controller
                         'user.delete' => 0
                     ]
                 ]);
-
                 $role->users()->attach($user);
-
                 $this->flash('success', 'Your account has been created.');
-
                 return $this->redirect($response, 'login');
             }
         }
-
-        return $this->twig->render($response, 'auth/register.twig');
+        return $this->render($response, 'auth/register.twig');
     }
 
     public function logout(Request $request, Response $response)
     {
         $this->auth->logout();
-
         return $this->redirect($response, 'home');
     }
 }

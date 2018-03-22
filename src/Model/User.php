@@ -14,10 +14,13 @@ class User extends EloquentUser
         'username',
         'email',
         'password',
-        'last_name',
-        'first_name',
         'permissions',
     ];
 
     protected $loginNames = ['username', 'email'];
+
+    public function video()
+    {
+        return $this->hasMany('App\Model\Video');
+    }
 }
