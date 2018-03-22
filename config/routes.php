@@ -11,10 +11,23 @@ $app->get('/logout', 'auth.controller:logout')
     ->add($container['auth.middleware']())
     ->setName('logout');
 
-$this->map(['GET', 'POST'], '/profile', 'app.controller:profile')
+$app->get('/profile', 'app.controller:profile')
     ->add($container['auth.middleware']())
     ->setName('profile');
 
-$this->map(['GET', 'POST'], '/dashboard', 'app.controller:dashboard')
+/*$this->map(['GET', 'POST'], '/dashboard', 'app.controller:dashboard')*/
+$app->post('/upload', 'app.controller:upload')
+    ->add($container['auth.middleware']())
+    ->setName('upload');
+
+$app->get('/delete/video/{id}', 'app.controller:deleteVideo')
+    ->add($container['auth.middleware']())
+    ->setName('deleteVideo');
+
+$app->post('/rename/video/{id}', 'app.controller:renameVideo')
+    ->add($container['auth.middleware']())
+    ->setName('renameVideo');
+
+$app->get('/dashboard', 'app.controller:dashboard')
     ->add($container['auth.middleware']())
     ->setName('dashboard');

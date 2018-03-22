@@ -18,4 +18,9 @@ class User extends EloquentUser
     ];
 
     protected $loginNames = ['username', 'email'];
+
+    public function video()
+    {
+        return $this->hasMany('App\Model\Video');
+    }
 }
