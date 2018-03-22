@@ -1,6 +1,10 @@
 {% extends 'layout.twig' %}
 {% block head_js %}
+{#
     <script type="text/javascript" src="/assets/js/JPlayer/lib/jquery.min.js"></script>
+#}
+    <script type="text/javascript" src="/assets/js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="/assets/js/jquery-ui.min.js"></script>
     <script type="text/javascript" src="/assets/js/JPlayer/dist/jplayer/jquery.jplayer.min.js"></script>
     <link href="/assets/js/JPlayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript" src="/assets/js/customPlayer.js"></script>
@@ -11,7 +15,18 @@
         <h1>Sort of dashboard</h1>
 
         <div id="divv"></div>
-        <script>CustomPlayer($('#divv'))</script>
+        <script>
+          $(document).ready(function() {
+            CustomPlayer($('#divv'), function () {
+              this.jPlayer("setMedia", {
+                  title: "Big Buck Bunny Trailer",
+                  m4v: "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer.m4v",
+                  ogv: "http://www.jplayer.org/video/ogv/Big_Buck_Bunny_Trailer.ogv",
+                  poster: "http://www.jplayer.org/video/poster/Big_Buck_Bunny_Trailer_480x270.png"
+                }
+              )
+            })
+          })</script>
 
     </div>
 
