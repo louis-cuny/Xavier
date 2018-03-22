@@ -15,6 +15,7 @@ $app->get('/profile', 'app.controller:profile')
     ->add($container['auth.middleware']())
     ->setName('profile');
 
+/*$this->map(['GET', 'POST'], '/dashboard', 'app.controller:dashboard')*/
 $app->post('/upload', 'app.controller:upload')
     ->add($container['auth.middleware']())
     ->setName('upload');
