@@ -321,7 +321,8 @@ function Curseur(div){
    */
   this.val = function(val){
     if(val == null){
-      return that.curseur.slider('getValue');
+      return that.curseur.slider('value');
+      /*return that.curseur.slider('getValue');*/
     }else{
       that.curseur.slider('value',val);
 /* that.curseur.slider('setValue',val);*/

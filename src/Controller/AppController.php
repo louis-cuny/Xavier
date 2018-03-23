@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Model\Sequence;
 use Awurth\Slim\Helper\Controller\Controller;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -59,7 +60,7 @@ class AppController extends Controller
 
         $newfile = $files['file'];
 
-        $video_name = uniqid() ;
+        $video_name = uniqid();
 
         // Save file to server
         if ($newfile->getError() === UPLOAD_ERR_OK) {
@@ -130,6 +131,12 @@ class AppController extends Controller
 
     public function dashboard(Request $request, Response $response)
     {
+        if ($request->isPost()) {
+            $sequence = new Sequence($_POST);
+            $sequence->save();
+            $this->flash('success', 'Your sequence has been loaded.');
+        }
+
         return $this->twig->render($response, 'app/dashboard.twig');
     }
 }
