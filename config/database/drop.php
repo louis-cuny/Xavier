@@ -9,7 +9,9 @@ $tables = [
     'role_users',
     'throttle',
     'roles',
-    'user'
+    'user',
+    'sequence',
+    'video'
 ];
 
 Manager::schema()->disableForeignKeyConstraints();

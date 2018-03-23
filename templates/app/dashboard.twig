@@ -17,18 +17,41 @@
     <div class="container">
         <h1>Sort of dashboard</h1>
 
-        <div id="divv"></div>
+        <div id="video_container"></div>
         <script>
           $(document).ready(function() {
-            CustomPlayer($('#divv'), function () {
-              $(this).jPlayer("setMedia", {
-                  title: "Big Buck Bunny Trailer",
-                  m4v: "/assets/videos/small.mp4",
-                  poster: "http://www.jplayer.org/video/poster/Big_Buck_Bunny_Trailer_480x270.png"
-                }
-              )
-            })
+             CustomPlayer($('#video_container'),
+            function () {
+                setVideo("Test with a sample", "/assets/videos/small.mp4")
+                /*setDebut()*/
+                /*setFin()*/
+              console.log((srcSet()))
+                initialize()
+            }
+          );
           })</script>
+    <br/>
+        <form  action="/dashboard" method="post">
+            <input type="hidden" id="video_id" name="video_id" value="1">
+            <div class="form-group">
+                <label for="start">Start</label>
+                <input type="text" class="form-control" id="start" name="start" aria-describedby="startHelp" placeholder="Enter start (00:00:00)">
+                <small id="startHelp" class="form-text text-muted">The second who start your sequence</small>
+            </div>
+            <div class="form-group">
+                <label for="end">End</label>
+                <input type="text" class="form-control" id="end" name="end" aria-describedby="endHelp" placeholder="Enter end (00:00:00)">
+                <small id="endHelp" class="form-text text-muted">The second who ends your sequence</small>
+            </div>
+            <div class="form-group">
+                <label for="expression">Expression</label>
+                <input type="text" class="form-control" id="expression" name="expression" aria-describedby="expressionHelp" placeholder="Enter expression truc.prend(truc)">
+                <small id="expressionHelp" class="form-text text-muted">The expressions of your sequence</small>
+            </div>
+            {{ csrf() }}
+
+            <button type="submit" class="btn btn-primary">Submit sequence</button>
+        </form>
 
     </div>
 

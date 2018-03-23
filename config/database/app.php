@@ -16,3 +16,14 @@ Manager::schema()->create('video', function (Blueprint $table) {
     $table->unsignedInteger('user_id');
     $table->foreign('user_id')->references('id')->on('user');
 });
+
+Manager::schema()->create('sequence', function (Blueprint $table) {
+    $table->increments('id');
+    $table->string('start'); //TODO reprendre le format utilisé par jplayer
+    $table->string('end');
+    $table->string('expression');
+    $table->unsignedInteger('video_id');
+    $table->foreign('video_id')->references('id')->on('video');
+    $table->timestamps();
+
+});
