@@ -20,14 +20,15 @@
         <div id="divv"></div>
         <script>
           $(document).ready(function() {
-            CustomPlayer($('#divv'), function () {
-              $(this).jPlayer("setMedia", {
-                  title: "Big Buck Bunny Trailer",
-                  m4v: "/assets/videos/small.mp4",
-                  poster: "http://www.jplayer.org/video/poster/Big_Buck_Bunny_Trailer_480x270.png"
-                }
-              )
-            })
+             CustomPlayer($('#divv'),
+            function () {
+                setVideo("Test with a sample", "/assets/videos/small.mp4")
+                /*setDebut()*/
+                /*setFin()*/
+              console.log((srcSet()))
+                initialize()
+            }
+          );
           })</script>
 
     </div>
