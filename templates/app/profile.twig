@@ -3,7 +3,7 @@
 {% block body %}
 
 <script src="{{ asset('assets/js/dropzone.js') }}"></script>
-<script src="{{ asset('assets/js/jquery-3.3.1.min') }}"></script>
+<script src="{{ asset('assets/js/jquery-3.3.1.min.js') }}"></script>
 
 <div class="container">
     <h1>{{ auth.user.username }}'s profile</h1>
@@ -14,26 +14,49 @@
     {% if videos %}
         {% for v in videos %}
             <div class="card">
-                <h5 class="card-header">
+                <h5 class="card-header d-flex justify-content-between align-items-center">
                     {{ v.name }} 
 
-                <div class="btn-group" role="group">
-                    <button id="btnGroupDrop1" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-pencil"></i>
-                    </button>
+                    <div class="btn-group badge" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-pencil"></i>
+                        </button>
 
-                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                        <button class="dropdown-item" data-toggle="modal" data-target="#renameVideo" data-link="{{ path_for("renameVideo", {"id": v.id}) }}">Edit name</button>                    
-                        <button class="dropdown-item" data-toggle="modal" data-target="#deleteModal" data-link="{{ path_for("deleteVideo", {"id": v.id}) }}">Delete video</button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                            <button class="dropdown-item" data-toggle="modal" data-target="#renameVideo" data-link="{{ path_for("renameVideo", {"id": v.id}) }}">Edit name</button>                    
+                            <button class="dropdown-item" data-toggle="modal" data-target="#deleteModal" data-link="{{ path_for("deleteVideo", {"id": v.id}) }}">Delete video</button>
+                        </div>
                     </div>
-                </div>
                    
                 </h5>
                 
                 <div class="card-body">
                     <h5 class="card-title">This video's sequences</h5>
-                    <p class="card-text">No sequences yet</p>
-                    <a href="#" class="btn btn-primary">Create a sequence</a>
+                    
+                    {% if v.sequences %}
+                        <ul class="list-group">
+                            {% for seq in v.sequences %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ seq.expression }} : from {{seq.start}} to {{seq.end}}
+                                    <span class="badge">
+                                        <a href="#" class="btn btn-success">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
+                                        
+                                        <button class="btn btn-danger" data-toggle="modal" data-target="#deleteSequenceModal" data-link="{{ path_for("deleteSequence", {"id": seq.id}) }}">
+                                            <i class="fa fa-trash"></i>
+                                        </button>                                    
+                                    </span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        
+                        <br>        
+                    {% else %}
+                        <p class="card-text">No sequences yet</p>                    
+                    {% endif %}
+                    
+                    <a href="{{ path_for("dashboard", {"id": v.id}) }}" class="btn btn-primary">Create a sequence</a>
                 </div>
             </div>
 
@@ -47,8 +70,7 @@
 
     <h2>Upload a new video</h2>
     <form id="upload" action="{{ path_for('upload') }}" class="dropzone" method="post">
-        <input type="hidden" name="{{nameKey}}" value="{{name}}">
-        <input type="hidden" name="{{valueKey}}" value="{{value}}">
+        {{ csrf() }}
         
         <div class="fallback">
             <input name="file" type="file"/>
@@ -69,12 +91,35 @@
                 </div>
                 
                 <div class="modal-body">
-                    Are you sure you want to delete this video?
+                    Are you sure you want to delete this video? This video, along with every sequences associated will be permanently deleted.
                 </div>
             
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">No, cancel</button>
                     <a class="btn btn-danger delete-btn" href="#" style="color: white">Yes, delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal when trying to delete a sequence -->
+    <div class="modal fade" id="deleteSequenceModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete warning</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    Are you sure you want to delete this sequence?
+                </div>
+            
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No, cancel</button>
+                    <a class="btn btn-danger delete-sequence-btn" href="#" style="color: white">Yes, delete</a>
                 </div>
             </div>
         </div>
@@ -92,8 +137,7 @@
                 </div>
 
                 <form class="rename-form" action="" method="post">
-                    <input type="hidden" name="{{nameKey}}" value="{{name}}">
-                    <input type="hidden" name="{{valueKey}}" value="{{value}}">
+                    {{ csrf() }}
                     
                     <div class="modal-body">
                         How would you like to rename this video ?
@@ -127,6 +171,14 @@
                 
                 let modal = $(this)
                 modal.find('.delete-btn').attr("href", recipient)
+            });
+
+            $('#deleteSequenceModal').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget)
+                let recipient = button.data('link') 
+                
+                let modal = $(this)
+                modal.find('.delete-sequence-btn').attr("href", recipient)
             });
 
             $('#renameVideo').on('show.bs.modal', function (event) {

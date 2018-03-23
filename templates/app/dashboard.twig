@@ -15,14 +15,16 @@
 {% block body %}
 
     <div class="container">
-        <h1>Sort of dashboard</h1>
+        <h1>Create a sequence for "{{ name }}"</h1>
 
         <div id="video_container"></div>
+        <input id="video-link" type="hidden" value="{{ link }}">
         <script>
           $(document).ready(function() {
              CustomPlayer($('#video_container'),
             function () {
-                setVideo("Test with a sample", "/assets/videos/small.mp4")
+                let videoLink = "/" + document.getElementById("video-link").value
+                setVideo("Test with a sample", videoLink)
                 /*setDebut()*/
                 /*setFin()*/
               console.log((srcSet()))
@@ -31,8 +33,8 @@
           );
           })</script>
     <br/>
-        <form  action="/dashboard" method="post">
-            <input type="hidden" id="video_id" name="video_id" value="1">
+        <form  action="{{ path_for("dashboard", {"id": id}) }}" method="post">
+            <input type="hidden" id="video_id" name="video_id" value="{{ id }}">
             <div class="form-group">
                 <label for="start">Start</label>
                 <input type="text" class="form-control" id="start" name="start" aria-describedby="startHelp" placeholder="Enter start (00:00:00)">

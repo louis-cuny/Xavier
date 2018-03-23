@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Model\Sequence;
 use Awurth\Slim\Helper\Controller\Controller;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -10,6 +9,7 @@ use Slim\Http\UploadedFile;
 
 use App\Model\Video;
 use App\Model\User;
+use App\Model\Sequence;
 
 class AppController extends Controller
 {
@@ -20,9 +20,6 @@ class AppController extends Controller
 
     public function profile(Request $request, Response $response)
     {
-        $nameKey = $this->csrf->getTokenNameKey();
-        $valueKey = $this->csrf->getTokenValueKey();
-
         $user_id = $this->auth->getUser()->id;
 
         $videos = Video::where('user_id', '=', $user_id)->get();
@@ -31,18 +28,26 @@ class AppController extends Controller
         {
             $current_vid = [
                 "id" => $v->id,
-                "name" => $v->name
+                "name" => $v->name,
+                "sequences" => []
             ];
+
+            $sequences = $v->sequences()->get();
+            foreach($sequences as $seq)
+            {
+                array_push($current_vid["sequences"], [
+                    "id" => $seq->id,
+                    "expression" => $seq->expression,
+                    "start" => $seq->start,
+                    "end"=> $seq->end
+                ]);
+            }
 
             array_push($videos_data, $current_vid);
         }
 
         $data = 
         [
-            "nameKey" => $nameKey,
-            "valueKey" => $valueKey,
-            "name" => $request->getAttribute($nameKey),
-            "value" => $request->getAttribute($valueKey),
             "videos" => $videos_data
         ];
 
@@ -129,14 +134,62 @@ class AppController extends Controller
         return $this->redirect($response, 'profile');              
     }
 
-    public function dashboard(Request $request, Response $response)
+    public function deleteSequence(Request $request, Response $response, $id)
+    {
+        if(! $sequence = Sequence::find($id))
+        {
+            $this->flash('danger', 'The sequence you are trying to delete does not seem to exist.');                            
+         
+            return $this->redirect($response, 'profile');                          
+        }
+
+        $video = $sequence->video;
+        if(! $video->user->id === $this->auth->getUser()->id)
+        {
+            $this->flash('danger', 'The sequence you are trying to delete does not seem to belong to you.');                            
+         
+            return $this->redirect($response, 'profile'); 
+        }
+
+        $sequence->delete();
+
+        $this->flash('success', 'The sequence has been successfully deleted.');                                    
+
+        return $this->redirect($response, 'profile');              
+    }
+
+    public function dashboard(Request $request, Response $response, $id)
     {
         if ($request->isPost()) {
             $sequence = new Sequence($_POST);
             $sequence->save();
-            $this->flash('success', 'Your sequence has been loaded.');
+            $this->flash('success', 'Your sequence has been saved.');
+
+            return $this->redirect($response, 'profile');             
         }
 
-        return $this->twig->render($response, 'app/dashboard.twig');
+        // Checking if the video exists
+        if(! $video = Video::find($id))
+        {
+            $this->flash('danger', 'The video you are trying to access does not seem to exist.');   
+            
+            return $this->redirect($response, 'profile'); 
+        }
+
+        // Checking if the video belongs to the user trying to create a sequence
+        $current_user = $this->auth->getUser();
+        if(! $video->user()->id === $current_user->id)
+        {
+            $this->flash('danger', 'The video you are trying to access does not seem to belong to you.');            
+                
+            return $this->redirect($response, 'profile');              
+        }
+
+        return $this->twig->render($response, 'app/dashboard.twig', 
+            [
+                "id" => $video->id,
+                "name" => $video->name,
+                "link" => $video->link
+            ]);
     }
 }

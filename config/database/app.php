@@ -14,7 +14,7 @@ Manager::schema()->create('video', function (Blueprint $table) {
     $table->string('name');
     $table->string('link');
     $table->unsignedInteger('user_id');
-    $table->foreign('user_id')->references('id')->on('user');
+    $table->foreign('user_id')->references('id')->on('user')->onDelete('cascade');;
 });
 
 Manager::schema()->create('sequence', function (Blueprint $table) {
@@ -23,7 +23,7 @@ Manager::schema()->create('sequence', function (Blueprint $table) {
     $table->string('end');
     $table->string('expression');
     $table->unsignedInteger('video_id');
-    $table->foreign('video_id')->references('id')->on('video');
+    $table->foreign('video_id')->references('id')->on('video')->onDelete('cascade');;
     $table->timestamps();
 
 });
