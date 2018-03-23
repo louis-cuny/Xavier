@@ -68,7 +68,7 @@ class AppController extends Controller
         }
 
         $new_video = new Video;
-        $new_video->link = "assets/videos/$video_name";
+        $new_video->link = "/assets/videos/$video_name";
         $new_video->name = "New video";
         $new_video->user_id = $this->auth->getUser()->id;
 
@@ -129,14 +129,35 @@ class AppController extends Controller
         return $this->redirect($response, 'profile');              
     }
 
-    public function dashboard(Request $request, Response $response)
+    public function dashboard(Request $request, Response $response, $id)
     {
         if ($request->isPost()) {
             $sequence = new Sequence($_POST);
             $sequence->save();
-            $this->flash('success', 'Your sequence has been loaded.');
+            $this->flash('success', 'Your sequence has been saved.');
         }
 
-        return $this->twig->render($response, 'app/dashboard.twig');
+        // Checking if the video exists
+        if(! $video = Video::find($id))
+        {
+            $this->flash('danger', 'The video you are trying to access does not seem to exist.');   
+            
+            return $this->redirect($response, 'profile'); 
+        }
+
+        // Checking if the video belongs to the user trying to create a sequence
+        $current_user = $this->auth->getUser();
+        if(! $video->user()->id === $current_user->id)
+        {
+            $this->flash('danger', 'The video you are trying to access does not seem to belong to you.');            
+                
+            return $this->redirect($response, 'profile');              
+        }
+
+        return $this->twig->render($response, 'app/dashboard.twig', 
+            [
+                "name" => $video->name,
+                "link" => $video->link
+            ]);
     }
 }

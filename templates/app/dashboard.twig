@@ -15,14 +15,16 @@
 {% block body %}
 
     <div class="container">
-        <h1>Sort of dashboard</h1>
+        <h1>Create a sequence for "{{ name }}"</h1>
 
         <div id="video_container"></div>
+        <input id="video-link" type="hidden" value="{{ link }}">
         <script>
           $(document).ready(function() {
              CustomPlayer($('#video_container'),
             function () {
-                setVideo("Test with a sample", "/assets/videos/small.mp4")
+                let videoLink = document.getElementById("video-link").value
+                setVideo("Test with a sample", videoLink)
                 /*setDebut()*/
                 /*setFin()*/
               console.log((srcSet()))
