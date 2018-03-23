@@ -14,26 +14,47 @@
     {% if videos %}
         {% for v in videos %}
             <div class="card">
-                <h5 class="card-header">
+                <h5 class="card-header d-flex justify-content-between align-items-center">
                     {{ v.name }} 
 
-                <div class="btn-group" role="group">
-                    <button id="btnGroupDrop1" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-pencil"></i>
-                    </button>
+                    <div class="btn-group badge" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-pencil"></i>
+                        </button>
 
-                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                        <button class="dropdown-item" data-toggle="modal" data-target="#renameVideo" data-link="{{ path_for("renameVideo", {"id": v.id}) }}">Edit name</button>                    
-                        <button class="dropdown-item" data-toggle="modal" data-target="#deleteModal" data-link="{{ path_for("deleteVideo", {"id": v.id}) }}">Delete video</button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                            <button class="dropdown-item" data-toggle="modal" data-target="#renameVideo" data-link="{{ path_for("renameVideo", {"id": v.id}) }}">Edit name</button>                    
+                            <button class="dropdown-item" data-toggle="modal" data-target="#deleteModal" data-link="{{ path_for("deleteVideo", {"id": v.id}) }}">Delete video</button>
+                        </div>
                     </div>
-                </div>
                    
                 </h5>
                 
                 <div class="card-body">
                     <h5 class="card-title">This video's sequences</h5>
-                    <p class="card-text">No sequences yet</p>
-
+                    
+                    {% if v.sequences %}
+                        <ul class="list-group">
+                            {% for seq in v.sequences %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ seq.expression }} : from {{seq.start}} to {{seq.end}}
+                                    <span class="badge">
+                                        <a href="#" class="btn btn-success">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-danger">
+                                            <i class="fa fa-trash"></i>
+                                        </a>                                    
+                                    </span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        
+                        <br>        
+                    {% else %}
+                        <p class="card-text">No sequences yet</p>                    
+                    {% endif %}
+                    
                     <a href="{{ path_for("dashboard", {"id": v.id}) }}" class="btn btn-primary">Create a sequence</a>
                 </div>
             </div>
@@ -48,8 +69,7 @@
 
     <h2>Upload a new video</h2>
     <form id="upload" action="{{ path_for('upload') }}" class="dropzone" method="post">
-        <input type="hidden" name="{{nameKey}}" value="{{name}}">
-        <input type="hidden" name="{{valueKey}}" value="{{value}}">
+        {{ csrf() }}
         
         <div class="fallback">
             <input name="file" type="file"/>
@@ -93,8 +113,7 @@
                 </div>
 
                 <form class="rename-form" action="" method="post">
-                    <input type="hidden" name="{{nameKey}}" value="{{name}}">
-                    <input type="hidden" name="{{valueKey}}" value="{{value}}">
+                    {{ csrf() }}
                     
                     <div class="modal-body">
                         How would you like to rename this video ?

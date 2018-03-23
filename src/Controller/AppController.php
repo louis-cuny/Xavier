@@ -20,9 +20,6 @@ class AppController extends Controller
 
     public function profile(Request $request, Response $response)
     {
-        $nameKey = $this->csrf->getTokenNameKey();
-        $valueKey = $this->csrf->getTokenValueKey();
-
         $user_id = $this->auth->getUser()->id;
 
         $videos = Video::where('user_id', '=', $user_id)->get();
@@ -31,18 +28,25 @@ class AppController extends Controller
         {
             $current_vid = [
                 "id" => $v->id,
-                "name" => $v->name
+                "name" => $v->name,
+                "sequences" => []
             ];
+
+            $sequences = $v->sequences()->get();
+            foreach($sequences as $seq)
+            {
+                array_push($current_vid["sequences"], [
+                    "expression" => $seq->expression,
+                    "start" => $seq->start,
+                    "end"=> $seq->end
+                ]);
+            }
 
             array_push($videos_data, $current_vid);
         }
 
         $data = 
         [
-            "nameKey" => $nameKey,
-            "valueKey" => $valueKey,
-            "name" => $request->getAttribute($nameKey),
-            "value" => $request->getAttribute($valueKey),
             "videos" => $videos_data
         ];
 
@@ -68,7 +72,7 @@ class AppController extends Controller
         }
 
         $new_video = new Video;
-        $new_video->link = "/assets/videos/$video_name";
+        $new_video->link = "assets/videos/$video_name";
         $new_video->name = "New video";
         $new_video->user_id = $this->auth->getUser()->id;
 
@@ -135,6 +139,8 @@ class AppController extends Controller
             $sequence = new Sequence($_POST);
             $sequence->save();
             $this->flash('success', 'Your sequence has been saved.');
+
+            return $this->redirect($response, 'profile');             
         }
 
         // Checking if the video exists
@@ -156,6 +162,7 @@ class AppController extends Controller
 
         return $this->twig->render($response, 'app/dashboard.twig', 
             [
+                "id" => $video->id,
                 "name" => $video->name,
                 "link" => $video->link
             ]);

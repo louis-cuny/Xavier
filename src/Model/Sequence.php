@@ -18,4 +18,8 @@ class Sequence extends EloquentUser
 
     ];
 
+    public function video()
+    {
+        return $this->belongsTo('App\Model\Video', 'video_id');
+    }
 }

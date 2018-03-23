@@ -19,5 +19,10 @@ class Video extends Model
     public function user()
 	{
 		return $this->belongsTo('App\Model\User', 'user_id');
-	}
+    }
+    
+    public function sequences()
+    {
+        return $this->hasMany('App\Model\Sequence');
+    }
 }
