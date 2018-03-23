@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Model\Sequence;
 use Awurth\Slim\Helper\Controller\Controller;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -10,6 +9,7 @@ use Slim\Http\UploadedFile;
 
 use App\Model\Video;
 use App\Model\User;
+use App\Model\Sequence;
 
 class AppController extends Controller
 {
@@ -36,6 +36,7 @@ class AppController extends Controller
             foreach($sequences as $seq)
             {
                 array_push($current_vid["sequences"], [
+                    "id" => $seq->id,
                     "expression" => $seq->expression,
                     "start" => $seq->start,
                     "end"=> $seq->end
@@ -129,6 +130,30 @@ class AppController extends Controller
         {
             $this->flash('danger', 'The video you are trying to rename does not seem to belong to you.');                            
         }
+
+        return $this->redirect($response, 'profile');              
+    }
+
+    public function deleteSequence(Request $request, Response $response, $id)
+    {
+        if(! $sequence = Sequence::find($id))
+        {
+            $this->flash('danger', 'The sequence you are trying to delete does not seem to exist.');                            
+         
+            return $this->redirect($response, 'profile');                          
+        }
+
+        $video = $sequence->video;
+        if(! $video->user->id === $this->auth->getUser()->id)
+        {
+            $this->flash('danger', 'The sequence you are trying to delete does not seem to belong to you.');                            
+         
+            return $this->redirect($response, 'profile'); 
+        }
+
+        $sequence->delete();
+
+        $this->flash('success', 'The sequence has been successfully deleted.');                                    
 
         return $this->redirect($response, 'profile');              
     }
