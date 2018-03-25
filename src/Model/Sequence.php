@@ -11,6 +11,7 @@ class Sequence extends EloquentUser
     protected $primaryKey = 'id';
 
     protected $fillable = [
+        'name',
         'start',
         'end',
         'expression',

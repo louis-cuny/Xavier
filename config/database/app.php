@@ -19,6 +19,7 @@ Manager::schema()->create('video', function (Blueprint $table) {
 
 Manager::schema()->create('sequence', function (Blueprint $table) {
     $table->increments('id');
+    $table->string('name');
     $table->string('start'); //TODO reprendre le format utilisé par jplayer
     $table->string('end');
     $table->string('expression');

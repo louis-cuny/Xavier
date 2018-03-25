@@ -32,6 +32,10 @@ $app->get('/delete/sequence/{id}', 'app.controller:deleteSequence')
     ->add($container['auth.middleware']())
     ->setName('deleteSequence');
 
+$app->post('/rename/sequence/{id}', 'app.controller:renameSequence')
+    ->add($container['auth.middleware']())
+    ->setName('renameSequence');
+
 $app->map(['GET', 'POST'],'/dashboard/{id}' , 'app.controller:dashboard')
     ->add($container['auth.middleware']())
     ->setName('dashboard');

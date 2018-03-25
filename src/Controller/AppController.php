@@ -37,7 +37,7 @@ class AppController extends Controller
             {
                 array_push($current_vid["sequences"], [
                     "id" => $seq->id,
-                    "expression" => $seq->expression,
+                    "name" => $seq->name,
                     "start" => $seq->start,
                     "end"=> $seq->end
                 ]);
@@ -116,7 +116,7 @@ class AppController extends Controller
 
             if($video && $video->user->id === $user->id)
             {
-                $video->name = addslashes($request->getParsedBody()['newName']);
+                $video->name = filter_var($request->getParsedBody()['newName'], FILTER_DEFAULT);
                 $video->update();
 
                 $this->flash('success', 'The video has been renamed successfully.');                
@@ -156,6 +156,32 @@ class AppController extends Controller
         $this->flash('success', 'The sequence has been successfully deleted.');                                    
 
         return $this->redirect($response, 'profile');              
+    }
+
+    public function renameSequence(Request $request, Response $response, $id)
+    {
+        if($user = $this->auth->getUser())
+        {
+            $seq = Sequence::find($id);
+
+            if($seq && $seq->video->user->id === $user->id)
+            {
+                $seq->name = filter_var($request->getParsedBody()['newName'], FILTER_DEFAULT);
+                $seq->update();
+
+                $this->flash('success', 'The sequence has been renamed successfully.');                
+            }
+            else
+            {
+                $this->flash('danger', 'The sequence you are trying to rename does not seem to exist.');                
+            }
+        }
+        else 
+        {
+            $this->flash('danger', 'The sequence you are trying to rename does not seem to belong to you.');                            
+        }
+
+        return $this->redirect($response, 'profile');                     
     }
 
     public function dashboard(Request $request, Response $response, $id)
