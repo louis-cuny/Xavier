@@ -10,6 +10,7 @@ use Slim\Http\UploadedFile;
 use App\Model\Video;
 use App\Model\User;
 use App\Model\Sequence;
+use App\Model\Comment;
 
 class AppController extends Controller
 {
@@ -182,6 +183,55 @@ class AppController extends Controller
         }
 
         return $this->redirect($response, 'profile');                     
+    }
+
+    public function displayComments(Request $request, Response $response, $id)
+    {
+        if(! $seq = Sequence::find($id))
+        {
+            $this->flash('danger', 'The sequence you are trying to watch does not seem to exist.');                            
+
+            return $this->redirect($response, 'home');                     
+        }
+
+        $video = $seq->video;
+
+        $comments = [];
+
+        foreach($seq->comments as $com)
+        {
+            array_push($comments, $com->comment);
+        }
+
+        $data = [
+            "id" => $seq->id,
+            "name" => $seq->name,
+            "link" => $video->link,
+            "comments" => $comments
+        ];
+
+        return $this->twig->render($response, 'app/videoComments.twig', $data);        
+    }
+
+    public function addComment(Request $request, Response $response, $id)
+    {
+        if(! $sequence = Sequence::find($id))
+        {
+            $this->flash('danger', 'You are trying to comment on a non-existing sequence.'); 
+            
+            return $this->redirect($response, 'home');              
+        }
+
+        $text = $request->getParsedBody()["comment"];
+
+        $comment = new Comment();
+        $comment->comment = filter_var($text, FILTER_DEFAULT);
+        $comment->sequence_id = $id;
+        $comment->save();
+
+        $this->flash('success', 'Your comment has been successfully sent.'); 
+    
+        return $this->redirect($response, 'home');  
     }
 
     public function dashboard(Request $request, Response $response, $id)

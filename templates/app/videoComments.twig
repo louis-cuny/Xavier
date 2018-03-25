@@ -1,0 +1,64 @@
+{% extends 'layout.twig' %}
+{% block head_js %}
+{#
+    <script type="text/javascript" src="/assets/js/JPlayer/lib/jquery.min.js"></script>
+    <script type="text/javascript" src="/assets/js/jquery-ui.min.js"></script>
+#}
+    <link rel="stylesheet" href="/assets/js/jquery-ui-1.12.1/jquery-ui.min.css"  type="text/css" >
+    <script type="text/javascript" src="/assets/js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="/assets/js/jquery-ui-1.12.1/jquery-ui.js"></script>
+
+    <script type="text/javascript" src="/assets/js/JPlayer/dist/jplayer/jquery.jplayer.min.js"></script>
+    <script type="text/javascript" src="/assets/js/customPlayer.js"></script>
+    <link href="/assets/js/JPlayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block body %}
+
+    <div class="container">
+        <h1>{{ name }}</h1>
+
+        <input id="video-link" type="hidden" value="{{ link }}">
+        
+        <div class="row">
+            <div id="video_container" class="col-sm"></div>          
+            <div class="col-sm">
+                <h3>Comments :</h3> 
+                <ul class="list-group list-group-flush" style="overflow-y: scroll; height: 450px;">
+                    {% if comments %}
+                        {% for com in comments %}
+                            <li class="list-group-item">{{ com }}</li>
+                        {% endfor %}                        
+                    {% else %}
+                        <li class="list-group-item">No comments yet</li>                                            
+                    {% endif %}
+                </ul>
+            </div>          
+        </div>
+
+        <form action="{{ path_for('addComment', {"id": id}) }}" method="post">
+            {{ csrf() }}
+            <div class="form-group">
+                <label for="commentTextArea"><h3>Tell us what you saw!</h3></label>
+                <textarea class="form-control" id="commentTextArea" name="comment" rows="1" style="resize: none" required></textarea>
+                <br>
+                <input type="submit" class="btn btn-primary" value="Send comment">
+            </div>
+        </form>
+        
+        <script>
+            $(document).ready(function() 
+            {
+                CustomPlayer($('#video_container'), () => 
+                {
+                    let videoLink = "/" + document.getElementById("video-link").value
+                    setVideo("Test with a sample", videoLink)
+                    /*setDebut()*/
+                    /*setFin()*/
+                    console.log((srcSet()))
+                    initialize()
+                });
+            })
+        </script>    
+    </div>
+
+{% endblock %}

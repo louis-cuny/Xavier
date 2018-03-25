@@ -11,7 +11,8 @@ $tables = [
     'roles',
     'user',
     'sequence',
-    'video'
+    'video',
+    'comment'
 ];
 
 Manager::schema()->disableForeignKeyConstraints();

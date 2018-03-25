@@ -23,4 +23,9 @@ class Sequence extends EloquentUser
     {
         return $this->belongsTo('App\Model\Video', 'video_id');
     }
+
+    public function comments()
+    {
+        return $this->hasMany('App\Model\Comment');
+    }
 }

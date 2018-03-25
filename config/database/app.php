@@ -26,5 +26,12 @@ Manager::schema()->create('sequence', function (Blueprint $table) {
     $table->unsignedInteger('video_id');
     $table->foreign('video_id')->references('id')->on('video')->onDelete('cascade');;
     $table->timestamps();
+});
 
+Manager::schema()->create('comment', function (Blueprint $table) {
+    $table->increments('id');
+    $table->string('comment');
+    $table->unsignedInteger('sequence_id');
+    $table->foreign('sequence_id')->references('id')->on('sequence')->onDelete('cascade');;
+    $table->timestamps();
 });
