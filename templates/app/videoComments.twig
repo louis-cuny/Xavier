@@ -35,15 +35,17 @@
             </div>          
         </div>
 
-        <form action="{{ path_for('addComment', {"id": id}) }}" method="post">
-            {{ csrf() }}
-            <div class="form-group">
-                <label for="commentTextArea"><h3>Tell us what you saw!</h3></label>
-                <textarea class="form-control" id="commentTextArea" name="comment" rows="1" style="resize: none" required></textarea>
-                <br>
-                <input type="submit" class="btn btn-primary" value="Send comment">
-            </div>
-        </form>
+        {% if not isAdmin %}
+            <form action="{{ path_for('addComment', {"id": id}) }}" method="post">
+                {{ csrf() }}
+                <div class="form-group">
+                    <label for="commentTextArea"><h3>Tell us what you saw!</h3></label>
+                    <textarea class="form-control" id="commentTextArea" name="comment" rows="1" style="resize: none" required></textarea>
+                    <br>
+                    <input type="submit" class="btn btn-primary" value="Send comment">
+                </div>
+            </form>
+        {% endif %}
         
         <script>
             $(document).ready(function() 

@@ -207,7 +207,8 @@ class AppController extends Controller
             "id" => $seq->id,
             "name" => $seq->name,
             "link" => $video->link,
-            "comments" => $comments
+            "comments" => $comments,
+            "isAdmin" => $video->user->id === $this->auth->getUser()->id ? true : false
         ];
 
         return $this->twig->render($response, 'app/videoComments.twig', $data);        
