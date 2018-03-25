@@ -16,10 +16,24 @@ class AppController extends Controller
 {
     public function home(Request $request, Response $response)
     {
-        $sequences = Sequence::all();
+        $sequences = Sequence::orderBy('created_at', 'desc')->get();
+        $sequences_data = [];
+
+        $nb = 5;
+        $max_nb = count($sequences) < $nb ? count($sequences) : $nb; 
+        for($i = 0 ; $i < $max_nb ; $i++)
+        {
+            $seq_data = [
+                "id" => $sequences[$i]->id,
+                "name" => $sequences[$i]->name
+            ];
+
+            array_push($sequences_data, $seq_data);
+        }
 
         $data = [
-            "rand_id" => count($sequences) > 0 ? $sequences[rand(0 ,count($sequences))]->id : null
+            "rand_id" => count($sequences) > 0 ? $sequences[rand(0 ,count($sequences) - 1)]->id : null,
+            "sequences" => $sequences_data
         ];
 
         return $this->twig->render($response, 'app/home.twig', $data);
