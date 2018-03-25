@@ -42,6 +42,10 @@ $app->get('/comments/{id}', 'app.controller:displayComments')
 $app->post('/comments/add/{id}', 'app.controller:addComment')
     ->setName('addComment');
 
+$app->get('/delete/comment/{id}', 'app.controller:deleteComment')
+    ->add($container['auth.middleware']())
+    ->setName('deleteComment');
+
 $app->map(['GET', 'POST'],'/dashboard/{id}' , 'app.controller:dashboard')
     ->add($container['auth.middleware']())
     ->setName('dashboard');

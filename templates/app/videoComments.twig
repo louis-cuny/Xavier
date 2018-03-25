@@ -26,7 +26,16 @@
                 <ul class="list-group list-group-flush" style="overflow-y: scroll; height: 450px;">
                     {% if comments %}
                         {% for com in comments %}
-                            <li class="list-group-item">{{ com }}</li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                {{ com.comment }}
+                                {% if isAdmin %}
+                                    <span class="badge">
+                                        <button class="btn btn-danger" data-toggle="modal" data-target="#deleteCommentModal" data-link="{{ path_for("deleteComment", {"id": com.id}) }}">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </span>
+                                {% endif %}
+                            </li>
                         {% endfor %}                        
                     {% else %}
                         <li class="list-group-item">No comments yet</li>                                            
@@ -47,6 +56,29 @@
             </form>
         {% endif %}
         
+        <!-- Modal when trying to delete a video -->
+        <div class="modal fade" id="deleteCommentModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Delete warning</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    
+                    <div class="modal-body">
+                        Are you sure you want to delete this comment?
+                    </div>
+                
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, cancel</button>
+                        <a class="btn btn-danger delete-btn" href="#" style="color: white">Yes, delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script>
             $(document).ready(function() 
             {
@@ -58,6 +90,14 @@
                     /*setFin()*/
                     console.log((srcSet()))
                     initialize()
+                });
+
+                $('#deleteCommentModal').on('show.bs.modal', function (event) {
+                    let button = $(event.relatedTarget)
+                    let recipient = button.data('link') 
+                    
+                    let modal = $(this)
+                    modal.find('.delete-btn').attr("href", recipient)
                 });
             })
         </script>    

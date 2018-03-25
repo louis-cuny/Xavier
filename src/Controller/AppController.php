@@ -200,7 +200,7 @@ class AppController extends Controller
 
         foreach($seq->comments as $com)
         {
-            array_push($comments, $com->comment);
+            array_push($comments, ["id" => $com->id, "comment" => $com->comment]);
         }
 
         $data = [
@@ -233,6 +233,25 @@ class AppController extends Controller
         $this->flash('success', 'Your comment has been successfully sent.'); 
     
         return $this->redirect($response, 'home');  
+    }
+
+    public function deleteComment(Request $request, Response $response, $id)
+    {
+        if(! $comment = Comment::find($id))
+        {
+            $this->flash('success', 'The comment you are trying to delete does not seem to exist.');
+            
+            return $this->redirect($response, 'home');              
+        }
+
+        $id_sequence = $comment->sequence->id;
+        $comment->delete();
+
+        $this->flash('success', 'The comment has been successfully deleted.');  
+
+        $url = $this->router->pathFor('comments', ['id' => $id_sequence]);
+
+        return $response->withStatus(200)->withHeader('Location', $url);  
     }
 
     public function dashboard(Request $request, Response $response, $id)
