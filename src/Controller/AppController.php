@@ -16,7 +16,13 @@ class AppController extends Controller
 {
     public function home(Request $request, Response $response)
     {
-        return $this->twig->render($response, 'app/home.twig');
+        $sequences = Sequence::all();
+
+        $data = [
+            "rand_id" => count($sequences) > 0 ? $sequences[rand(0 ,count($sequences))]->id : null
+        ];
+
+        return $this->twig->render($response, 'app/home.twig', $data);
     }
 
     public function profile(Request $request, Response $response)

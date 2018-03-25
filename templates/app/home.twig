@@ -3,7 +3,18 @@
 {% block body %}
 
 <div class="container">
-    <h1 >Hello World!</h1>
+    <h3 >Latest clips</h3>
+    
+    <ul class="list-group">
+        {% if rand_id %}
+        {% endif %}
+    </ul>    
+
+    {% if rand_id %}
+        <h3>Not feeling inspired? Watch a random clip!</h3>
+        
+        <a href="{{ path_for('comments', {"id": rand_id}) }}" class="btn btn-lg btn-primary" style="color: white">Random clip</a>
+    {% endif %}
 </div>
 
 {% endblock %}
