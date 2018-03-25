@@ -10,12 +10,33 @@ use Slim\Http\UploadedFile;
 use App\Model\Video;
 use App\Model\User;
 use App\Model\Sequence;
+use App\Model\Comment;
 
 class AppController extends Controller
 {
     public function home(Request $request, Response $response)
     {
-        return $this->twig->render($response, 'app/home.twig');
+        $sequences = Sequence::orderBy('created_at', 'desc')->get();
+        $sequences_data = [];
+
+        $nb = 5;
+        $max_nb = count($sequences) < $nb ? count($sequences) : $nb; 
+        for($i = 0 ; $i < $max_nb ; $i++)
+        {
+            $seq_data = [
+                "id" => $sequences[$i]->id,
+                "name" => $sequences[$i]->name
+            ];
+
+            array_push($sequences_data, $seq_data);
+        }
+
+        $data = [
+            "rand_id" => count($sequences) > 0 ? $sequences[rand(0 ,count($sequences) - 1)]->id : null,
+            "sequences" => $sequences_data
+        ];
+
+        return $this->twig->render($response, 'app/home.twig', $data);
     }
 
     public function profile(Request $request, Response $response)
@@ -37,7 +58,7 @@ class AppController extends Controller
             {
                 array_push($current_vid["sequences"], [
                     "id" => $seq->id,
-                    "expression" => $seq->expression,
+                    "name" => $seq->name,
                     "start" => $seq->start,
                     "end"=> $seq->end
                 ]);
@@ -116,7 +137,7 @@ class AppController extends Controller
 
             if($video && $video->user->id === $user->id)
             {
-                $video->name = addslashes($request->getParsedBody()['newName']);
+                $video->name = filter_var($request->getParsedBody()['newName'], FILTER_DEFAULT);
                 $video->update();
 
                 $this->flash('success', 'The video has been renamed successfully.');                
@@ -156,6 +177,101 @@ class AppController extends Controller
         $this->flash('success', 'The sequence has been successfully deleted.');                                    
 
         return $this->redirect($response, 'profile');              
+    }
+
+    public function renameSequence(Request $request, Response $response, $id)
+    {
+        if($user = $this->auth->getUser())
+        {
+            $seq = Sequence::find($id);
+
+            if($seq && $seq->video->user->id === $user->id)
+            {
+                $seq->name = filter_var($request->getParsedBody()['newName'], FILTER_DEFAULT);
+                $seq->update();
+
+                $this->flash('success', 'The sequence has been renamed successfully.');                
+            }
+            else
+            {
+                $this->flash('danger', 'The sequence you are trying to rename does not seem to exist.');                
+            }
+        }
+        else 
+        {
+            $this->flash('danger', 'The sequence you are trying to rename does not seem to belong to you.');                            
+        }
+
+        return $this->redirect($response, 'profile');                     
+    }
+
+    public function displayComments(Request $request, Response $response, $id)
+    {
+        if(! $seq = Sequence::find($id))
+        {
+            $this->flash('danger', 'The sequence you are trying to watch does not seem to exist.');                            
+
+            return $this->redirect($response, 'home');                     
+        }
+
+        $video = $seq->video;
+
+        $comments = [];
+
+        foreach($seq->comments as $com)
+        {
+            array_push($comments, ["id" => $com->id, "comment" => $com->comment]);
+        }
+
+        $data = [
+            "id" => $seq->id,
+            "name" => $seq->name,
+            "link" => $video->link,
+            "comments" => $comments,
+            "isAdmin" => $video->user->id === $this->auth->getUser()->id ? true : false
+        ];
+
+        return $this->twig->render($response, 'app/videoComments.twig', $data);        
+    }
+
+    public function addComment(Request $request, Response $response, $id)
+    {
+        if(! $sequence = Sequence::find($id))
+        {
+            $this->flash('danger', 'You are trying to comment on a non-existing sequence.'); 
+            
+            return $this->redirect($response, 'home');              
+        }
+
+        $text = $request->getParsedBody()["comment"];
+
+        $comment = new Comment();
+        $comment->comment = filter_var($text, FILTER_DEFAULT);
+        $comment->sequence_id = $id;
+        $comment->save();
+
+        $this->flash('success', 'Your comment has been successfully sent.'); 
+    
+        return $this->redirect($response, 'home');  
+    }
+
+    public function deleteComment(Request $request, Response $response, $id)
+    {
+        if(! $comment = Comment::find($id))
+        {
+            $this->flash('success', 'The comment you are trying to delete does not seem to exist.');
+            
+            return $this->redirect($response, 'home');              
+        }
+
+        $id_sequence = $comment->sequence->id;
+        $comment->delete();
+
+        $this->flash('success', 'The comment has been successfully deleted.');  
+
+        $url = $this->router->pathFor('comments', ['id' => $id_sequence]);
+
+        return $response->withStatus(200)->withHeader('Location', $url);  
     }
 
     public function dashboard(Request $request, Response $response, $id)
