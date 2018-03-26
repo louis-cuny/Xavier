@@ -11,13 +11,11 @@
     <title>{% block title %}Xavier{% endblock %}</title>
     {% block head_js %}{% endblock %}
 
-    {% block stylesheets %}
-        <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
-        <link rel="stylesheet" href="{{ asset('assets/css/dropzone.css') }}">
-        <link rel="stylesheet"
-              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    {% endblock %}
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    {% block stylesheets %}{% endblock %}
+    <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
+
 </head>
 <body>
 {% block navbar %}
@@ -29,10 +27,9 @@
 {% endblock %}
 
 {% block body %}{% endblock %}
-{% block javascript %}
-
-    <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('assets/js/app.js') }}"></script>
-{% endblock %}
+<script type="text/javascript" src="{{ asset('assets/js/jquery-3.3.1.js') }}"></script>
+<script type="text/javascript" src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+{% block javascript %}{% endblock %}
+<script type="text/javascript" src="{{ asset('assets/js/app.js') }}"></script>
 </body>
 </html>

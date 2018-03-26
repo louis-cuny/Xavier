@@ -1,15 +1,12 @@
 {% extends 'layout.twig' %}
-{% block head_js %}
-    <script type="text/javascript" src="/assets/js/jquery-3.3.1.js"></script>
-    <script type="text/javascript" src="/assets/js/bootstrap-slider.min.js"></script>
-    <script type="text/javascript" src="/assets/js/JPlayer/dist/jplayer/jquery.jplayer.min.js"></script>
-    <script type="text/javascript" src="/assets/js/customPlayer.js"></script>
-  {#  <script type="text/javascript" src="/assets/js/video.js"></script>#}
-    {#<link href="/assets/css/style.css" rel="stylesheet" type="text/css" />#}
-    <link href="/assets/css/bootstrap-slider.min.css" rel="stylesheet" type="text/css" />
-    <link href="/assets/css/customPlayer.css" rel="stylesheet" type="text/css" />
-    <link href="/assets/js/JPlayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css" rel="stylesheet" type="text/css" />
-{% endblock %}
+    {% block stylesheets %}
+        {#  <script type="text/javascript" src="/assets/js/video.js"></script>#}
+        {#<link href="/assets/css/style.css" rel="stylesheet" type="text/css" />#}
+        <link href="/assets/css/bootstrap-slider.min.css" rel="stylesheet" type="text/css"/>
+        <link href="/assets/css/customPlayer.css" rel="stylesheet" type="text/css"/>
+        <link href="/assets/js/JPlayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css" rel="stylesheet"
+              type="text/css"/>
+    {% endblock %}
 {% block body %}
 
     <div class="container">
@@ -17,39 +14,32 @@
 
         <div id="video_container"></div>
         <input id="video-link" type="hidden" value="{{ link }}">
-        <script>
-          $(document).ready(function() {
-             CustomPlayer($('#video_container'),
-            function () {
-                let videoLink = "/" + document.getElementById("video-link").value
-                setVideo("{{ name }}", videoLink)
-                /*setDebut()*/
-                /*setFin()*/
-                initialize()
-            }
-          );
-          })</script>
-    <br/>
-        <form  action="{{ path_for("dashboard", {"id": id}) }}" method="post">
+
+        <br/>
+        <form action="{{ path_for("dashboard", {"id": id}) }}" method="post">
             <input type="hidden" id="video_id" name="video_id" value="{{ id }}">
             <div class="form-group">
                 <label for="name">Name</label>
-                <input type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp" placeholder="Enter name">
+                <input type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp"
+                       placeholder="Enter name">
                 <small id="nameHelp" class="form-text text-muted">The name of your sequence</small>
             </div>
             <div class="form-group">
                 <label for="start">Start</label>
-                <input type="text" class="form-control" id="start" name="start" aria-describedby="startHelp" placeholder="Enter start (00:00:00)">
+                <input type="text" class="form-control" id="start" name="start" aria-describedby="startHelp"
+                       placeholder="Enter start (00:00:00)">
                 <small id="startHelp" class="form-text text-muted">The second who start your sequence</small>
             </div>
             <div class="form-group">
                 <label for="end">End</label>
-                <input type="text" class="form-control" id="end" name="end" aria-describedby="endHelp" placeholder="Enter end (00:00:00)">
+                <input type="text" class="form-control" id="end" name="end" aria-describedby="endHelp"
+                       placeholder="Enter end (00:00:00)">
                 <small id="endHelp" class="form-text text-muted">The second who ends your sequence</small>
             </div>
             <div class="form-group">
                 <label for="expression">Expression</label>
-                <input type="text" class="form-control" id="expression" name="expression" aria-describedby="expressionHelp" placeholder="Enter expression truc.prend(truc)">
+                <input type="text" class="form-control" id="expression" name="expression"
+                       aria-describedby="expressionHelp" placeholder="Enter expression truc.prend(truc)">
                 <small id="expressionHelp" class="form-text text-muted">The expressions of your sequence</small>
             </div>
             {{ csrf() }}
@@ -58,5 +48,20 @@
         </form>
 
     </div>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript" src="{{ asset('/assets/js/bootstrap-slider.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('/assets/js/JPlayer/dist/jplayer/jquery.jplayer.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('/assets/js/customPlayer.js') }}"></script>
 
+    <script>
+      CustomPlayer($('#video_container'),
+        function () {
+          let videoLink = "/" + document.getElementById("video-link").value
+          setVideo("{{ name }}", videoLink)
+          /*setDebut()*/
+          /*setFin()*/
+          initialize()
+        })
+    </script>
 {% endblock %}
