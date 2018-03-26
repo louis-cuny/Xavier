@@ -1,4 +1,4 @@
-var swfPath = '/assets/js/JPlayer/dist/jplayer/';
+var swfPath = 'assets/js/jPlayer/dist/s';
 
 var playerHTML = "\
 <div id='jp_container_1' class='jp-video lecteurVideo' role='application' aria-label='media player'>\
@@ -163,7 +163,6 @@ function CustomPlayer(div, ready, width, height){
       //rtmpv: url,
       poster: ""
     });
-    return true;
   }
 
   /**
@@ -185,6 +184,7 @@ function CustomPlayer(div, ready, width, height){
       fin = that.trueDuration();
     }
   }
+
 
   /**
    * Initialise le lecteur en mettant le curseur à la bonne position et en s'assurant que la lecture ne se fasse qu'entre les bornes désignées.
@@ -249,6 +249,7 @@ function CustomPlayer(div, ready, width, height){
     autoBlur: true,
   });
 
+
   /*
   A chaque fois que le temps de la vidéo change (on avance dans la lecture), on met à jour la position du curseur et le temps affiché.
   */
@@ -265,13 +266,19 @@ function CustomPlayer(div, ready, width, height){
     that.curseur.val(Math.floor(currentTime) - that.debut);
   });
 
+
   /*
   A chaque fois qu'on déplace manuellement le curseur, on navigue dans la vidéo.
   */
   that.curseur.curseur.on("slide slideStop",function(){
     that.goTo(that.curseur.val());
   });
+
 }
+
+
+
+
 
 /**
  * Représente un curseur stylisé. La zone à gauche du curseur est coloriée, celle à droite est laissée blanche.
@@ -289,8 +296,7 @@ function Curseur(div){
     }
   })
   this.curseur = div;
-  this.curseur.slider('value',0);
-  /*this.curseur.slider('setValue',0);*/
+  this.curseur.slider('setValue',0);
 
   this.enable = function(){
     that.curseur.slider('enable');
@@ -307,11 +313,11 @@ function Curseur(div){
    */
   this.min = function(min){
     if(min == null){
-      return that.curseur.slider('option','min');
-      /*return that.curseur.slider('getAttribute','min');*/
+      return that.curseur.slider('getAttribute','min');
     }else{
-      that.curseur.slider('option','min', min);
+      that.curseur.slider('setAttribute','min', min);
     }
+
   };
 
   /**
@@ -321,13 +327,13 @@ function Curseur(div){
    */
   this.val = function(val){
     if(val == null){
-      return that.curseur.slider('value');
-      /*return that.curseur.slider('getValue');*/
+      return that.curseur.slider('getValue');
     }else{
-      that.curseur.slider('value',val);
-/* that.curseur.slider('setValue',val);*/
+      that.curseur.slider('setValue',val);
     }
+
   };
+
 
   /**
    * Permet de lire ou de mettre à jour la valeur maximale du curseur. Si aucun paramètre n'est passé, on lit la valeur maximale. Si un paramètre est passé, il remplace l'ancienne valeur.
@@ -336,12 +342,11 @@ function Curseur(div){
    */
   this.max = function(max){
     if(max == null){
-      return that.curseur.slider('option','max');
-/*      return that.curseur.slider('getAttribute','max');*/
+      return that.curseur.slider('getAttribute','max');
     }else{
-      that.curseur.slider('option','max',max);
-      /*that.curseur.slider('setAttribute','max',max);*/
+      that.curseur.slider('setAttribute','max',max);
     }
-  };
-}
 
+  };
+
+}

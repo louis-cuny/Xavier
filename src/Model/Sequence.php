@@ -16,7 +16,6 @@ class Sequence extends EloquentUser
         'end',
         'expression',
         'video_id'
-
     ];
 
     public function video()

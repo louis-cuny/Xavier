@@ -1,5 +1,7 @@
 {% extends 'layout.twig' %}
-
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/dropzone.css') }}">
+{% endblock %}
 {% block body %}
 
 <script src="{{ asset('assets/js/dropzone.js') }}"></script>

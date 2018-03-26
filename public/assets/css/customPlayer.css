@@ -1,0 +1,63 @@
+.loader {
+    /*background-image: url('../img/loader.gif');*/
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+}
+
+.jp-video-360p .loader {
+    height: 360px;
+    width: 640px;
+    margin-top: -360px;
+}
+
+.jp-video-270p .loader {
+    height: 270px;
+    width: 480px;
+    margin-top: -270px;
+}
+
+/*
+ **** Curseur ****
+ */
+#curseurContainer .slider-handle {
+    background: #E9E9E9;
+    border: 1px solid #BDBDBD;
+}
+
+#curseurContainer .slider-handle:hover {
+    cursor: pointer;
+}
+
+#curseurContainer .slider-selection {
+    background: #019BE3;
+}
+
+/*
+ **** Timers ****
+ */
+.current-time, .duration {
+    width: 60px;
+    font-size: .64em;
+    font-style: oblique;
+}
+
+.current-time {
+    float: left;
+    display: inline;
+    cursor: default;
+}
+
+.duration {
+    float: right;
+    display: inline;
+    text-align: right;
+}
+
+.current-time {
+    margin-left: 20px;
+}
+
+.duration {
+    margin-right: 20px;
+}
