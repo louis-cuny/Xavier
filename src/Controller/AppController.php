@@ -16,7 +16,6 @@ class AppController extends Controller
 {
     public function home(Request $request, Response $response)
     {
-        phpinfo();
         $sequences = Sequence::orderBy('created_at', 'desc')->get();
         $sequences_data = [];
 
@@ -224,12 +223,13 @@ class AppController extends Controller
             array_push($comments, ["id" => $com->id, "comment" => $com->comment]);
         }
 
+
         $data = [
             "id" => $seq->id,
             "name" => $seq->name,
             "link" => $video->link,
             "comments" => $comments,
-            "isAdmin" => $video->user->id === $this->auth->getUser()->id ? true : false
+            "isAdmin" => $video->user_id === $this->auth->getUser()->id
         ];
 
         return $this->twig->render($response, 'app/videoComments.twig', $data);        
