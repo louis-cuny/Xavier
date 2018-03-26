@@ -32,6 +32,20 @@ $app->get('/delete/sequence/{id}', 'app.controller:deleteSequence')
     ->add($container['auth.middleware']())
     ->setName('deleteSequence');
 
+$app->post('/rename/sequence/{id}', 'app.controller:renameSequence')
+    ->add($container['auth.middleware']())
+    ->setName('renameSequence');
+
+$app->get('/comments/{id}', 'app.controller:displayComments')
+    ->setName('comments');
+
+$app->post('/comments/add/{id}', 'app.controller:addComment')
+    ->setName('addComment');
+
+$app->get('/delete/comment/{id}', 'app.controller:deleteComment')
+    ->add($container['auth.middleware']())
+    ->setName('deleteComment');
+
 $app->map(['GET', 'POST'],'/dashboard/{id}' , 'app.controller:dashboard')
     ->add($container['auth.middleware']())
     ->setName('dashboard');

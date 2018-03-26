@@ -1,0 +1,106 @@
+{% extends 'layout.twig' %}
+{% block head_js %}
+{#
+    <script type="text/javascript" src="/assets/js/JPlayer/lib/jquery.min.js"></script>
+    <script type="text/javascript" src="/assets/js/jquery-ui.min.js"></script>
+#}
+    <link rel="stylesheet" href="/assets/js/jquery-ui-1.12.1/jquery-ui.min.css"  type="text/css" >
+    <script type="text/javascript" src="/assets/js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="/assets/js/jquery-ui-1.12.1/jquery-ui.js"></script>
+
+    <script type="text/javascript" src="/assets/js/JPlayer/dist/jplayer/jquery.jplayer.min.js"></script>
+    <script type="text/javascript" src="/assets/js/customPlayer.js"></script>
+    <link href="/assets/js/JPlayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block body %}
+
+    <div class="container">
+        <h1>{{ name }}</h1>
+
+        <input id="video-link" type="hidden" value="{{ link }}">
+        
+        <div class="row">
+            <div id="video_container" class="col-sm"></div>          
+            <div class="col-sm">
+                <h3>Comments :</h3> 
+                <ul class="list-group list-group-flush" style="overflow-y: scroll; height: 450px;">
+                    {% if comments %}
+                        {% for com in comments %}
+                            <li class="list-group-item d-flex justify-content-between">
+                                {{ com.comment }}
+                                {% if isAdmin %}
+                                    <span class="badge">
+                                        <button class="btn btn-danger" data-toggle="modal" data-target="#deleteCommentModal" data-link="{{ path_for("deleteComment", {"id": com.id}) }}">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </span>
+                                {% endif %}
+                            </li>
+                        {% endfor %}                        
+                    {% else %}
+                        <li class="list-group-item">No comments yet</li>                                            
+                    {% endif %}
+                </ul>
+            </div>          
+        </div>
+
+        {% if not isAdmin %}
+            <form action="{{ path_for('addComment', {"id": id}) }}" method="post">
+                {{ csrf() }}
+                <div class="form-group">
+                    <label for="commentTextArea"><h3>Tell us what you saw!</h3></label>
+                    <textarea class="form-control" id="commentTextArea" name="comment" rows="1" style="resize: none" required></textarea>
+                    <br>
+                    <input type="submit" class="btn btn-primary" value="Send comment">
+                </div>
+            </form>
+        {% endif %}
+        
+        <!-- Modal when trying to delete a video -->
+        <div class="modal fade" id="deleteCommentModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Delete warning</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    
+                    <div class="modal-body">
+                        Are you sure you want to delete this comment?
+                    </div>
+                
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, cancel</button>
+                        <a class="btn btn-danger delete-btn" href="#" style="color: white">Yes, delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function() 
+            {
+                CustomPlayer($('#video_container'), () => 
+                {
+                    let videoLink = "/" + document.getElementById("video-link").value
+                    setVideo("Test with a sample", videoLink)
+                    /*setDebut()*/
+                    /*setFin()*/
+                    console.log((srcSet()))
+                    initialize()
+                });
+
+                $('#deleteCommentModal').on('show.bs.modal', function (event) {
+                    let button = $(event.relatedTarget)
+                    let recipient = button.data('link') 
+                    
+                    let modal = $(this)
+                    modal.find('.delete-btn').attr("href", recipient)
+                });
+            })
+        </script>    
+    </div>
+
+{% endblock %}
