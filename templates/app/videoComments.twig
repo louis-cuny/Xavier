@@ -1,17 +1,18 @@
 {% extends 'layout.twig' %}
-{% block head_js %}
-{#
-    <script type="text/javascript" src="/assets/js/JPlayer/lib/jquery.min.js"></script>
-    <script type="text/javascript" src="/assets/js/jquery-ui.min.js"></script>
-#}
-    <link rel="stylesheet" href="/assets/js/jquery-ui-1.12.1/jquery-ui.min.css"  type="text/css" >
-    <script type="text/javascript" src="/assets/js/jquery-3.3.1.js"></script>
-    <script type="text/javascript" src="/assets/js/jquery-ui-1.12.1/jquery-ui.js"></script>
 
-    <script type="text/javascript" src="/assets/js/JPlayer/dist/jplayer/jquery.jplayer.min.js"></script>
-    <script type="text/javascript" src="/assets/js/customPlayer.js"></script>
-    <link href="/assets/js/JPlayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css" rel="stylesheet" type="text/css" />
+{% block head_js %}
+    <script type="text/javascript" src="{{ asset('assets/js/jquery-3.3.1.min.js') }}"></script>
 {% endblock %}
+
+{% block stylesheets %}
+    {#  <script type="text/javascript" src="/assets/js/video.js"></script>#}
+    {#<link href="/assets/css/style.css" rel="stylesheet" type="text/css" />#}
+    <link href="/assets/css/bootstrap-slider.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/assets/css/customPlayer.css" rel="stylesheet" type="text/css"/>
+    <link href="/assets/js/JPlayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css" rel="stylesheet"
+        type="text/css"/>
+{% endblock %}
+
 {% block body %}
 
     <div class="container">
@@ -82,16 +83,6 @@
         <script>
             $(document).ready(function() 
             {
-                CustomPlayer($('#video_container'), () => 
-                {
-                    let videoLink = "/" + document.getElementById("video-link").value
-                    setVideo("Test with a sample", videoLink)
-                    /*setDebut()*/
-                    /*setFin()*/
-                    console.log((srcSet()))
-                    initialize()
-                });
-
                 $('#deleteCommentModal').on('show.bs.modal', function (event) {
                     let button = $(event.relatedTarget)
                     let recipient = button.data('link') 
@@ -102,5 +93,21 @@
             })
         </script>    
     </div>
+{% endblock %}
 
+{% block javascript %}
+    <script type="text/javascript" src="{{ asset('/assets/js/bootstrap-slider.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('/assets/js/JPlayer/dist/jplayer/jquery.jplayer.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('/assets/js/customPlayer.js') }}"></script>
+
+    <script>
+      CustomPlayer($('#video_container'),
+        function () {
+          let videoLink = "/" + document.getElementById("video-link").value
+          setVideo("{{ name }}", videoLink)
+          /*setDebut()*/
+          /*setFin()*/
+          initialize()
+        })
+    </script>
 {% endblock %}
