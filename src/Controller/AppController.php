@@ -294,7 +294,8 @@ class AppController extends Controller
 
         // Checking if the video belongs to the user trying to create a sequence
         $current_user = $this->auth->getUser();
-        if(! $video->user()->id === $current_user->id)
+
+        if(! $video->user_id === $current_user->id)
         {
             $this->flash('danger', 'The video you are trying to access does not seem to belong to you.');            
                 
