@@ -16,6 +16,7 @@ class AppController extends Controller
 {
     public function home(Request $request, Response $response)
     {
+        phpinfo();
         $sequences = Sequence::orderBy('created_at', 'desc')->get();
         $sequences_data = [];
 
