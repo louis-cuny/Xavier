@@ -209,10 +209,10 @@
           // Setting Dropzone.js options
           Dropzone.options.upload =
             {
-              paramName: "file", // The name that will be used to transfer the file
-              renameFile: () => {
-                return "video"
+              init: function() {
+                this.on("complete", function(file) { location.reload(true) });
               },
+              paramName: "file", // The name that will be used to transfer the file
               maxFilesize: 100, // MB
               acceptedFiles: 'video/*',
               maxFiles: 1
