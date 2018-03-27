@@ -19,6 +19,8 @@
         <h1>{{ name }}</h1>
 
         <input id="video-link" type="hidden" value="{{ link }}">
+        <input id="video-start" type="hidden" value="{{ start }}">
+        <input id="video-end" type="hidden" value="{{ end }}">
         
         <div class="row">
             <div id="video_container" class="col-sm"></div>          
@@ -104,9 +106,9 @@
       CustomPlayer($('#video_container'),
         function () {
           let videoLink = "/" + document.getElementById("video-link").value
-          setVideo("{{ name }}", videoLink)
-          /*setDebut()*/
-          /*setFin()*/
+          let videoStart = document.getElementById("video-start").value
+          let videoEnd = document.getElementById("video-end").value
+          setVideo("{{ name }}", videoLink, videoStart, videoEnd)
           initialize()
         })
     </script>
