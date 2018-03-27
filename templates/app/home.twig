@@ -3,7 +3,7 @@
 {% block body %}
 
 <div class="container">
-    <h3 >Latest clips</h3>
+    <h3 >Latest sequences</h3>
     
     <ul class="list-group">
         {% if sequences %}
@@ -28,9 +28,9 @@
     <br>
 
     {% if rand_id %}
-        <h3>Not feeling inspired? Watch a random clip!</h3>
+        <h3>Not feeling inspired? Watch a random sequence!</h3>
         
-        <a href="{{ path_for('comments', {"id": rand_id}) }}" class="btn btn-lg btn-primary" style="color: white">Random clip</a>
+        <a href="{{ path_for('comments', {"id": rand_id}) }}" class="btn btn-lg btn-primary" style="color: white">Random sequence</a>
     {% endif %}
 </div>
 
