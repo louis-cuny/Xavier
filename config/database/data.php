@@ -31,16 +31,16 @@ DB::table('role_users')->insert([
 \App\Model\Sequence::insert([
     [
         'id' => 1,
-        'name' => 'Atlas open the door',
-        'start' => '00:00:10',
-        'end' => '00:00:14',
+        'name' => 'Atlas opens the door',
+        'start' => '10',
+        'end' => '14',
         'expression' => 'atlas.open(door)',
         'video_id' => '2'
     ],[
         'id' => 2,
-        'name' => 'Atlas take the box',
-        'start' => '00:01:10',
-        'end' => '00:01:14',
+        'name' => 'Atlas takes the box',
+        'start' => '70',
+        'end' => '74',
         'expression' => 'atlas.take(box)',
         'video_id' => '2'
     ]
