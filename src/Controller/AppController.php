@@ -226,6 +226,8 @@ class AppController extends Controller
 
         $data = [
             "id" => $seq->id,
+            "start" => $seq->start,
+            "end" => $seq->end,
             "name" => $seq->name,
             "link" => $video->link,
             "comments" => $comments,
