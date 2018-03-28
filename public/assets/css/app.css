@@ -6,6 +6,9 @@ body {
   margin-top: 10px;
   margin-bottom: 10px; }
 
+.flash {
+  margin-bottom: 10px; }
+
 .auth.grid {
   position: fixed;
   top: 0;
