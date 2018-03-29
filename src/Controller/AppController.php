@@ -114,16 +114,16 @@ class AppController extends Controller
                 unlink($video->link);
                 $video->delete();
 
-                $this->flash('success', 'The video has been deleted successfully.');                
+                $this->flash('success', 'La vidéo a été supprimé avec succès.');                
             }
             else
             {
-                $this->flash('danger', 'The video you are trying to delete does not seem to exist.');                
+                $this->flash('danger', 'La vidéo que vous essayez de supprimer ne semble pas exister.');                
             }
         }
         else 
         {
-            $this->flash('danger', 'The video you are trying to delete does not seem to belong to you.');                            
+            $this->flash('danger', 'La vidéo que vous essayez de supprimer ne semble pas vous appartenir.');                            
         }
 
         return $this->redirect($response, 'profile');      
@@ -140,16 +140,16 @@ class AppController extends Controller
                 $video->name = filter_var($request->getParsedBody()['newName'], FILTER_DEFAULT);
                 $video->update();
 
-                $this->flash('success', 'The video has been renamed successfully.');                
+                $this->flash('success', 'La vidéo a été renommé avec succès.');                
             }
             else
             {
-                $this->flash('danger', 'The video you are trying to rename does not seem to exist.');                
+                $this->flash('danger', 'La vidéo que vous essayez de renommer ne semble pas exister.');                
             }
         }
         else 
         {
-            $this->flash('danger', 'The video you are trying to rename does not seem to belong to you.');                            
+            $this->flash('danger', 'La vidéo que vous essayez de renommer ne semble pas vous appartenir.');                            
         }
 
         return $this->redirect($response, 'profile');              
@@ -159,7 +159,7 @@ class AppController extends Controller
     {
         if(! $sequence = Sequence::find($id))
         {
-            $this->flash('danger', 'The sequence you are trying to delete does not seem to exist.');                            
+            $this->flash('danger', 'La séquence que vous essayez de supprimer ne semble pas exister.');                            
          
             return $this->redirect($response, 'profile');                          
         }
@@ -167,14 +167,14 @@ class AppController extends Controller
         $video = $sequence->video;
         if(! $video->user->id === $this->auth->getUser()->id)
         {
-            $this->flash('danger', 'The sequence you are trying to delete does not seem to belong to you.');                            
+            $this->flash('danger', 'La séquence que vous essayez de supprimer ne semble pas vous appartenir.');                            
          
             return $this->redirect($response, 'profile'); 
         }
 
         $sequence->delete();
 
-        $this->flash('success', 'The sequence has been successfully deleted.');                                    
+        $this->flash('success', 'La séquence a été supprimé avec succès.');                                    
 
         return $this->redirect($response, 'profile');              
     }
@@ -190,16 +190,16 @@ class AppController extends Controller
                 $seq->name = filter_var($request->getParsedBody()['newName'], FILTER_DEFAULT);
                 $seq->update();
 
-                $this->flash('success', 'The sequence has been renamed successfully.');                
+                $this->flash('success', 'La séquence a été renommé avec succès.');                
             }
             else
             {
-                $this->flash('danger', 'The sequence you are trying to rename does not seem to exist.');                
+                $this->flash('danger', 'La séquence que vous essayez de supprimer ne semble pas exister.');                
             }
         }
         else 
         {
-            $this->flash('danger', 'The sequence you are trying to rename does not seem to belong to you.');                            
+            $this->flash('danger', 'La séquence vous que essayez de renommer ne semble pas vous appartenir.');                            
         }
 
         return $this->redirect($response, 'profile');                     
@@ -209,7 +209,7 @@ class AppController extends Controller
     {
         if(! $seq = Sequence::find($id))
         {
-            $this->flash('danger', 'The sequence you are trying to watch does not seem to exist.');                            
+            $this->flash('danger', 'La séquence que vous essayez de regarder ne semble pas exister.');                            
 
             return $this->redirect($response, 'home');                     
         }
@@ -241,7 +241,7 @@ class AppController extends Controller
     {
         if(! $sequence = Sequence::find($id))
         {
-            $this->flash('danger', 'You are trying to comment on a non-existing sequence.'); 
+            $this->flash('danger', 'Vous avez essayé de commenter une séquence qui n\'existe pas.'); 
             
             return $this->redirect($response, 'home');              
         }
@@ -253,7 +253,7 @@ class AppController extends Controller
         $comment->sequence_id = $id;
         $comment->save();
 
-        $this->flash('success', 'Your comment has been successfully sent.'); 
+        $this->flash('success', 'Votre commentaire a bien été pris en compte.'); 
     
         return $this->redirect($response, 'home');  
     }
@@ -262,7 +262,7 @@ class AppController extends Controller
     {
         if(! $comment = Comment::find($id))
         {
-            $this->flash('success', 'The comment you are trying to delete does not seem to exist.');
+            $this->flash('success', 'Le commentaire que vous essayez de supprimer ne semble pas exister.');
             
             return $this->redirect($response, 'home');              
         }
@@ -270,7 +270,7 @@ class AppController extends Controller
         $id_sequence = $comment->sequence->id;
         $comment->delete();
 
-        $this->flash('success', 'The comment has been successfully deleted.');  
+        $this->flash('success', 'Le commentaire a été supprimé avec succès.');  
 
         $url = $this->router->pathFor('comments', ['id' => $id_sequence]);
 
@@ -282,7 +282,7 @@ class AppController extends Controller
         if ($request->isPost()) {
             $sequence = new Sequence($_POST);
             $sequence->save();
-            $this->flash('success', 'Your sequence has been saved.');
+            $this->flash('success', 'Votre séquence a été sauvegardé.');
 
             return $this->redirect($response, 'profile');             
         }
@@ -290,7 +290,7 @@ class AppController extends Controller
         // Checking if the video exists
         if(! $video = Video::find($id))
         {
-            $this->flash('danger', 'The video you are trying to access does not seem to exist.');   
+            $this->flash('danger', 'La vidéo à laquelle vous essayez d\'acceder ne semble pas exister.');   
             
             return $this->redirect($response, 'profile'); 
         }
@@ -300,7 +300,7 @@ class AppController extends Controller
 
         if(! $video->user_id === $current_user->id)
         {
-            $this->flash('danger', 'The video you are trying to access does not seem to belong to you.');            
+            $this->flash('danger', 'La vidéo à laquelle vous essayez d\'accéder ne semble pas vous appartenir.');            
                 
             return $this->redirect($response, 'profile');              
         }
