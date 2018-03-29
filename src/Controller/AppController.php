@@ -95,7 +95,7 @@ class AppController extends Controller
 
         $new_video = new Video;
         $new_video->link = "assets/videos/$video_name";
-        $new_video->name = "New video";
+        $new_video->name = "Nouvelle vidéo";
         $new_video->user_id = $this->auth->getUser()->id;
 
         $new_video->save();
