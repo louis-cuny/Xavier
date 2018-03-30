@@ -24,13 +24,13 @@ class AuthController extends Controller
             $remember = $request->getParam('remember') ? true : false;
             try {
                 if ($this->auth->authenticate($credentials, $remember)) {
-                    $this->flash('success', 'You are now logged in.');
+                    $this->flash('success', 'Vous êtes maintenant connecté.');
                     return $this->redirect($response, 'home');
                 } else {
-                    $this->validator->addError('auth', 'Bad username or password');
+                    $this->validator->addError('auth', 'Mauvais nom d\'utilisateur ou mot de passe.');
                 }
             } catch (ThrottlingException $e) {
-                $this->validator->addError('auth', 'Too many attempts!');
+                $this->validator->addError('auth', 'Trop de tentatives !');
             }
         }
         return $this->render($response, 'auth/login.twig');
@@ -49,21 +49,21 @@ class AuthController extends Controller
                 'password' => [
                     'rules' => V::noWhitespace()->length(6, 25),
                     'messages' => [
-                        'length' => 'The password length must be between {{minValue}} and {{maxValue}} characters'
+                        'length' => 'La taille du mot de passe doit être entre {{minValue}} et {{maxValue}} caractères.'
                     ]
                 ],
                 'password_confirm' => [
                     'rules' => V::equals($password),
                     'messages' => [
-                        'equals' => 'Passwords don\'t match'
+                        'equals' => 'Les mots de passes ne sont pas les mêmes.'
                     ]
                 ]
             ]);
             if ($this->auth->findByCredentials(['login' => $username])) {
-                $this->validator->addError('username', 'This username is already used.');
+                $this->validator->addError('username', 'Ce nom d\'utilisateur est déjà utilisé.');
             }
             if ($this->auth->findByCredentials(['login' => $email])) {
-                $this->validator->addError('email', 'This email is already used.');
+                $this->validator->addError('email', 'Cet email est déjà utilisé.');
             }
             if ($this->validator->isValid()) {
                 /** @var \Cartalyst\Sentinel\Roles\EloquentRole $role */
@@ -77,7 +77,7 @@ class AuthController extends Controller
                     ]
                 ]);
                 $role->users()->attach($user);
-                $this->flash('success', 'Your account has been created.');
+                $this->flash('success', 'Votre compte a bien été créé.');
                 return $this->redirect($response, 'login');
             }
         }
