@@ -20,6 +20,5 @@
     "gulp-uglify": "^3.0.0",
     "pump": "^1.0.3"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

@@ -1,3 +1,99 @@
+{#{% extends 'layout.twig' %}#}
+    {#{% block stylesheets %}#}
+        {#<link href="/assets/css/style.css" rel="stylesheet" type="text/css" />#}
+        {#<link href="{{ asset('/assets/css/bootstrap-slider.min.css') }}" rel="stylesheet" type="text/css"/>#}
+        {#<link href="{{ asset('/assets/css/customPlayer.css') }}" rel="stylesheet" type="text/css"/>#}
+        {#<link href="{{ asset('/assets/js/vis/vis.min.css') }}" rel="stylesheet" type="text/css"/>#}
+        {#<link href="{{ asset('/assets/js/JPlayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css') }}" rel="stylesheet"#}
+              {#type="text/css"/>#}
+    {#{% endblock %}#}
+{#{% block body %}#}
+
+    {#<div class="container">#}
+        {#<div class="row">#}
+            {#<h1 style="margin-bottom: 20px">Create a sequence for "{{ name }}"</h1>#}
+            {#<div class="col-sm-8">#}
+                {#<div id="video_container"></div>#}
+                {#<input id="video-link" type="hidden" value="{{ link }}">#}
+            {#</div>#}
+            {#<div class="col-sm-4">#}
+                {#<form action="{{ path_for("dashboard", {"id": id}) }}" method="post">#}
+                    {#<input type="hidden" id="video_id" name="video_id" value="{{ id }}">#}
+                    {#<div class="form-group">#}
+                        {#<label for="name">Name</label>#}
+                        {#<input type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp"#}
+                               {#placeholder="Enter name">#}
+                        {#<small id="nameHelp" class="form-text text-muted">The name of your sequence</small>#}
+                    {#</div>#}
+                    {#<div class="form-group">#}
+                        {#<label for="start">Start</label>#}
+                        {#<input type="text" class="form-control" id="start" name="start" aria-describedby="startHelp"#}
+                               {#placeholder="Enter start (in seconds)">#}
+                        {#<small id="startHelp" class="form-text text-muted">The second who start your sequence</small>#}
+                    {#</div>#}
+                    {#<div class="form-group">#}
+                        {#<label for="end">End</label>#}
+                        {#<input type="text" class="form-control" id="end" name="end" aria-describedby="endHelp"#}
+                               {#placeholder="Enter end (in seconds)">#}
+                        {#<small id="endHelp" class="form-text text-muted">The second who ends your sequence</small>#}
+                    {#</div>#}
+                    {#<div class="form-group">#}
+                        {#<label for="expression">Expression</label>#}
+                        {#<input type="text" class="form-control" id="expression" name="expression"#}
+                               {#aria-describedby="expressionHelp" placeholder="Enter expression truc.prend(truc)">#}
+                        {#<small id="expressionHelp" class="form-text text-muted">The expressions of your sequence</small>#}
+                    {#</div>#}
+                    {#{{ csrf() }}#}
+
+                    {#<button type="submit" class="btn btn-primary">Submit sequence</button>#}
+                {#</form>#}
+            {#</div>#}
+        {#</div>#}
+        {#<div class="row block">#}
+            {#<div class="col-md-11">#}
+                {#<div id="timeline"></div>#}
+            {#</div>#}
+            {#<div class="col-md-1">#}
+                {#<form id="formValidation" action="#" method="post">#}
+                    {#<textarea name="reaction" id="reactionsTextArea" hidden></textarea>#}
+                    {#<textarea name="duree" id="duree" hidden></textarea>#}
+                    {#<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#validationModal" disabled>Valider</button>#}
+                {#</form>#}
+            {#</div>#}
+        {#</div>#}
+    {#</div>#}
+{#{% endblock %}#}
+{#{% block javascript %}#}
+    {#<script type="text/javascript" src="{{ asset('/assets/js/bootstrap-slider.min.js') }}"></script>#}
+    {#<script type="text/javascript" src="{{ asset('/assets/js/JPlayer/dist/jplayer/jquery.jplayer.min.js') }}"></script>#}
+    {#<script type="text/javascript" src="{{ asset('/assets/js/customPlayer.js') }}"></script>#}
+    {#<script type="text/javascript" src="{{ asset('/assets/js/vis/vis.min.js') }}"></script>#}
+    {#<script type="text/javascript" src="{{ asset('/assets/js/initTimeline.js') }}"></script>#}
+{##}
+    {#<script type="text/javascript" src="/assets/js/video.js"></script>#}
+{##}
+
+
+    {#<script>#}
+      {#$(document).ready(function(){#}
+         {#player = CustomPlayer($('#video_container'), function () {#}
+          {#let videoLink = "/" + document.getElementById("video-link").value#}
+          {#player.setVideo("{{ name }}", videoLink)#}
+          {#/*setDebut()*/#}
+          {#/*setFin()*/#}
+        {#player.initialize(initializeTimeline)#}
+      {#})#}
+      {#});#}
+
+
+      {#player = new CustomPlayer($('#videoContainer'), function(){#}
+          {#player.setVideo("{{video.name}}","{{video.url}}","{{video.debut}}", "{{video.fin}}");#}
+          {#player.initialize(initializeTimeline);#}
+        {#});#}
+    {#</script>#}
+    {#<script type="text/javascript" src="{{ asset('/assets/js/annotation.js') }}"></script>#}
+{#{% endblock %}#}
+
 {% extends 'layout.twig' %}
     {% block stylesheets %}
         {#  <script type="text/javascript" src="/assets/js/video.js"></script>#}
@@ -6,6 +102,11 @@
         <link href="/assets/css/customPlayer.css" rel="stylesheet" type="text/css"/>
         <link href="/assets/js/JPlayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css" rel="stylesheet"
               type="text/css"/>
+
+
+        <script src="/assets/js/vis/vis.min.js"></script>
+        <link href="/assets/js/vis/vis.min.css" rel="stylesheet" type="text/css"/>
+
     {% endblock %}
 {% block body %}
 
@@ -50,21 +151,107 @@
                 </form>
             </div>
         </div>
+
+        <div class="row">
+            <div class="containerVideo col-md-7" id="videoContainer"></div>
+            <div class="col-md-5">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Étiquettes</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row boutonsReaction">
+                            {% set nbReaction = 0 %}
+                            {% for reaction in reactions %}
+                                <div class="col-md-6 col-sm-4">
+                                    <button id="{{ nbReaction }};{{ reaction.color }};{{ reaction.name }};{{ reaction.id }}"
+                                            style="background-color: greenyellow"
+                                            class="btn btn-block reactionButton reactionLibreButton"
+                                            disabled>{{ reaction.name }}</button>
+                                </div>
+                                {% set nbReaction = nbReaction+1 %}
+                            {% endfor %}
+
+                        </div> <!--/boutonsReaction -->
+
+                    </div> <!-- /panel-body -->
+                    <div class="panel-footer text-muted">
+                        Vous pouvez déplacer, redimensionner ou supprimer une séquence ajoutée en cliquant dessus dans
+                        la frise
+                        ci-dessous.
+                        Zoomez avec la molette.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row block">
+            <div class="col-md-11">
+                <div id="timeline"></div>
+            </div>
+            <div class="col-md-1">
+                <form id="formValidation" action="submitAnnotation" method="post">
+                    <textarea name="reaction" id="reactionsTextArea" hidden></textarea>
+                    <textarea name="duree" id="duree" hidden></textarea>
+                    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal"
+                            data-target="#validationModal"
+                            disabled>Valider
+                    </button>
+                </form>
+            </div>
+        </div>
+
     </div>
+<datalist id="propositions"></datalist>
+
+
+    <style>
+        {% for reaction in reactions %}
+        #reac{{reaction.id}} {
+            border-color: red;
+            background-color: darkred;
+        }
+        #reac{{reaction.id}} .vis-item-content{
+            padding:0px;
+        }
+        {% endfor %}
+
+    </style>
 {% endblock %}
 {% block javascript %}
     <script type="text/javascript" src="{{ asset('/assets/js/bootstrap-slider.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('/assets/js/JPlayer/dist/jplayer/jquery.jplayer.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('/assets/js/customPlayer.js') }}"></script>
 
+    <script src="{{ asset('/assets/js/initTimeline.js') }}"></script>
+
     <script>
-      CustomPlayer($('#video_container'),
-        function () {
-          let videoLink = "/" + document.getElementById("video-link").value
-          setVideo("{{ name }}", videoLink)
-          /*setDebut()*/
-          /*setFin()*/
-          initialize()
-        })
+
+        $(document).ready(function () {
+            player = new CustomPlayer($('#video_container'),
+                function () {
+                    let videoLink = "/" + document.getElementById("video-link").value
+                    player.setVideo("{{ name }}", videoLink)
+                    /*setDebut()*/
+                    /*setFin()*/
+                    player.initialize(initializeTimeline)
+                })
+            console.log(timeline);
+            {% for reaction in reactions %}
+            items.add({
+                id: "reac{{  reaction.id }}",
+                start: {{  reaction.start }},
+                end: {{  reaction.end }},
+                title : "{{ reaction.name }}",
+                content : "{{ reaction.name }}"
+            })
+            {% endfor %}
+            console.log(timeline);
+            timeline.redraw()
+        });
+
+
+
+
     </script>
+    <script src="{{ asset('/assets/js/annotation.js') }}" charset="utf-8"></script>
 {% endblock %}
