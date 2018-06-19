@@ -177,8 +177,11 @@ $(function () {
     function handleDragStart(event) {
         var dragSrcEl = event.target;
         event.dataTransfer.effectAllowed = 'move';
+
+        var uid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
         var item = {
-            id: $(event.target).data('id'),
+            id: $(event.target).data('id') + '_' + uid,
             title: event.target.innerHTML,
             className: 'item',
             type: "range",
@@ -198,4 +201,4 @@ $(function () {
         var item = itemCode[i];
         item.addEventListener('dragstart', handleDragStart.bind(this), false);
     }
-});
+})

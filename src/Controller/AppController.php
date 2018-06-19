@@ -25,7 +25,8 @@ class AppController extends Controller
         for ($i = 0; $i < $max_nb; $i++) {
             $seq_data = [
                 "id"   => $sequences[$i]->id,
-                "name" => $sequences[$i]->name
+                "name" => $sequences[$i]->video->name,
+                "timing" => $sequences[$i]->start . ' - ' . $sequences[$i]->end
             ];
 
             array_push($sequences_data, $seq_data);
@@ -56,7 +57,8 @@ class AppController extends Controller
             foreach ($sequences as $seq) {
                 array_push($current_vid["sequences"], [
                     "id"    => $seq->id,
-                    "name"  => $seq->name,
+                    "name"  => $seq->label->expression,
+                    "timing" => $seq->start . ' - ' . $seq->end,
                     "start" => $seq->start,
                     "end"   => $seq->end
                 ]);
@@ -162,26 +164,6 @@ class AppController extends Controller
         return $this->redirect($response, 'profile');
     }
 
-    public function renameSequence(Request $request, Response $response, $id)
-    {
-        if ($user = $this->auth->getUser()) {
-            $seq = Sequence::find($id);
-
-            if ($seq && $seq->video->user->id === $user->id) {
-                $seq->name = filter_var($request->getParsedBody()['newName'], FILTER_DEFAULT);
-                $seq->update();
-
-                $this->flash('success', 'The sequence has been renamed successfully.');
-            } else {
-                $this->flash('danger', 'The sequence you are trying to rename does not seem to exist.');
-            }
-        } else {
-            $this->flash('danger', 'The sequence you are trying to rename does not seem to belong to you.');
-        }
-
-        return $this->redirect($response, 'profile');
-    }
-
     public function displayComments(Request $request, Response $response, $id)
     {
         if (!$seq = Sequence::find($id)) {
@@ -202,7 +184,8 @@ class AppController extends Controller
             'id'       => $seq->id,
             'start'    => $seq->start,
             'end'      => $seq->end,
-            'name'     => $seq->name,
+            'video_name' => $seq->video->name,
+            'name' => $seq->label->expression,
             'link'     => $video->link,
             'comments' => $comments,
             'isAdmin'  => $this->auth->getUser() && ($video->user_id === $this->auth->getUser()->id)
@@ -252,9 +235,38 @@ class AppController extends Controller
     public function dashboard(Request $request, Response $response, $id)
     {
         if ($request->isPost()) {
-            $sequence = new Sequence($_POST);
-            $sequence->save();
-            $this->flash('success', 'Votre séquence a été sauvegardé.');
+            $data = json_decode($_POST['data']);
+
+            foreach($data as $seq)
+            {
+                $newSeq = new Sequence();
+                $newSeq->start = $seq->start;
+                $newSeq->end = $seq->end;
+                $newSeq->video_id = $id;
+                
+                $idSeq = explode('_', $seq->id);
+
+                if($idSeq[0] === 'db')
+                {
+                    // Cas où le label vient de la db
+                    $newSeq->label_id = $idSeq[1];
+                }
+                else
+                {
+                    // Cas où le label a été créé dynamiquement
+
+                    // On crée le label en bdd
+
+                    // On l'attribue à notre nouvelle séquence
+                }
+
+                $newSeq->save();
+            }
+
+            if(sizeof($data) > 1)
+                $this->flash('success', 'Vos séquences ont été sauvegardé.');
+            else
+                $this->flash('success', 'Votre séquence a été sauvegardé.');
 
             return $this->redirect($response, 'profile');
         }
@@ -280,7 +292,7 @@ class AppController extends Controller
         foreach($labels_data as $label)
         {
             $labels[] = [
-                'id' => $label->id,
+                'id' => 'db_' . $label->id,
                 'expression' => $label->expression
             ];
         }

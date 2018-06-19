@@ -63,18 +63,19 @@
 
         <div class="row block">
             <div class="col-md-11">
+                <div class="text-muted">Glissez - déposez les expressions dans la timeline pour créer une séquence</div>
                 <!-- Timeline ! -->
                 <div id="timeline"></div>
 
             </div>
         
             <div class="col-md-1">
-                <form id="formValidation" action="submitAnnotation" method="post">
-                    <textarea name="reaction" id="reactionsTextArea" hidden></textarea>
-                    <textarea name="duree" id="duree" hidden></textarea>
-                    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal"
-                            data-target="#validationModal"
-                            disabled>Valider
+                <form id="formValidation" action="{{ path_for("dashboard", {"id": id}) }}" method="post">
+                    {{ csrf() }}
+                    <input name="data" id="data" type="hidden"></textarea>
+                    <button onclick="loadForm(event)" type="submit" class="btn btn-primary btn-lg" data-toggle="modal"
+                            data-target="#validationModal">
+                        Valider
                     </button>
                 </form>
             </div>
@@ -102,6 +103,47 @@
                 })
             timeline.redraw()
 
-        });
+            $('formValidation #data').popover({
+                trigger: 'manual',
+                title: 'Pas de séquence à créer !',
+                placement: 'top',
+                delay: { "hide": 500 }
+            })
+        })
+
+        function loadForm(event) {
+            event.preventDefault()
+            var data = items.get({
+                type: {
+                    start: 'ISODate',
+                    end: 'ISODate'
+                }
+            })
+
+            data = data.filter(e => e.id != 'background')
+
+            if(data.length == 0)
+            {
+                alert('Pas de séquence à créer !')
+
+                return false
+            }
+
+            data.map(e => {
+                var tmp = vis.moment(e.start).format('HH:mm:ss')
+                e.start = vis.moment.duration(tmp).asSeconds()
+
+                var tmp = vis.moment(e.end).format('HH:mm:ss')
+                e.end = vis.moment.duration(tmp).asSeconds()
+            })
+
+            var json = JSON.stringify(data, null, 2)
+
+            console.log(json)
+            
+            $('#formValidation #data').val(json)
+            $('#formValidation').submit()
+            //return false
+        }
     </script>
 {% endblock %}
