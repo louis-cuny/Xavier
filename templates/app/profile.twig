@@ -232,8 +232,9 @@
             $('.btn-popover').popover({
                 container: 'body',
                 placement: 'top',
-                title: 'Info',
-                trigger: 'hover'
+                title: '<i class="fa fa-lg fa-info-circle"></i>  <b>Information</b>',
+                trigger: 'hover', 
+                html: true
             })
 
             $('#deleteModal').on('show.bs.modal', function (event) {

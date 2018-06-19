@@ -8,7 +8,6 @@ $(function () {
         {id: 'background', start: min, end: min, type: 'background'}
     ]);
 
-
     // Configuration de base de la timeline
     options = {
         minHeight: "100px",
@@ -33,13 +32,6 @@ $(function () {
         //Pour empêcher de mettre des temps en dessous de la seconde
         snap: snap,
         zoomMin: 8000,
-        onMove: function (item, callback) {
-            var index = item.title.indexOf('<small>');
-            var title = item.title.slice(0, index);
-            title += "<small>(" + vis.moment(item.start).format('mm:ss') + ' - ' + vis.moment(item.end).format('mm:ss') + ")</small>";
-            item.title = title;
-            callback(item);
-        }
     };
 
     // Create a Timeline
@@ -66,6 +58,7 @@ $(function () {
                 start: min,
                 end: max,
                 zoomMin: zoomMin,
+                editable: true,
                 //Pour empêcher de déplacer les items en dehors de la frise
                 onMoving: function (item, callback) {
                     var debut = vis.moment(item.start);
@@ -119,95 +112,8 @@ $(function () {
                 var time = date.unix() - min.unix();
                 player.goTo(time);
             });
-
-            // $('#timeline').prepend('<div id="chevron-gauche"></div>');
-            // $('#timeline').append('<div id="chevron-droit"></div>');
-            // $('#chevron-droit').addClass('clickable')
-            //     .css('position', 'absolute')
-            //     .css('top', '50%')
-            //     .css('right', '-5px')
-            //     .css('z-index', '5')
-            //     .append('<i class="glyphicon glyphicon-chevron-right"></i>')
-            //     .hide();
-            //
-            // $('#chevron-gauche').addClass('clickable')
-            //     .css('position', 'absolute')
-            //     .css('top', '50%')
-            //     .css('left', '-5px')
-            //     .css('z-index', '5')
-            //     .append('<i class="glyphicon glyphicon-chevron-left"></i>')
-            //     .hide();
-            //
-            // $('.vis-timeline.vis-bottom').append('<div id="recentrer"></div>');
-            // $('#recentrer').addClass('btn btn-info')
-            //     .attr('title', 'Recentrer la frise')
-            //     .css('position', 'absolute')
-            //     .css('padding', '0px 5px 0px 5px')
-            //     .css('right', '5px')
-            //     .css('bottom', '5px')
-            //     .append('<i class="glyphicon glyphicon-screenshot"></i>')
-            //     .hide();
-            //
-            // $('#chevron-gauche').on('click', function () {
-            //     var range = timeline.getWindow();
-            //     var start = vis.moment(range.start);
-            //     var end = vis.moment(range.end);
-            //     //Différence en millisecondes
-            //     var diff = end.diff(start);
-            //     //On déplace d'1/5 de l'ancienne largeur
-            //     var step = diff / 5;
-            //     timeline.setWindow(start.subtract(step, 'ms'), end.subtract(step, 'ms'));
-            // });
-            //
-            // $('#chevron-droit').on('click', function () {
-            //     var range = timeline.getWindow();
-            //     var start = vis.moment(range.start);
-            //     var end = vis.moment(range.end);
-            //     //Différence en millisecondes
-            //     var diff = end.diff(start);
-            //     //On déplace d'1/5 de l'ancienne largeur
-            //     var step = diff / 5;
-            //     timeline.setWindow(start.add(step, 'ms'), end.add(step, 'ms'));
-            // });
-            //
-            // $('#recentrer').on('click', function () {
-            //     timeline.moveTo(timeline.getCustomTime('ct'));
-            // });
-
-            // timeline.on('rangechange', function (event) {
-            //     var caDepasse = false;
-            //     var start = vis.moment(event.start);
-            //     var end = vis.moment(event.end);
-            //     if (start.isAfter(min)) {
-            //         $('#chevron-gauche').show();
-            //         caDepasse = true;
-            //     } else {
-            //         $('#chevron-gauche').hide();
-            //     }
-            //     if (end.isBefore(max)) {
-            //         $('#chevron-droit').show();
-            //         caDepasse = true;
-            //     } else {
-            //         $('#chevron-droit').hide();
-            //     }
-            //     if (caDepasse) {
-            //         $('#recentrer').show();
-            //     } else {
-            //         $('#recentrer').hide();
-            //     }
-            // });
-
-            $('.reactionButton').prop('disabled', false);
-            $('#formValidation button').prop('disabled', false);
-
         }
     };
-    //
-    // secToMoment = function (sec) {
-    //     var time = min.unix() + parseInt(sec);
-    //     return vis.moment.unix(time);
-    // }
-
 
     /**
      * Snap a date to a rounded value.
@@ -268,4 +174,28 @@ $(function () {
         return clone;
     };
 
+    function handleDragStart(event) {
+        var dragSrcEl = event.target;
+        event.dataTransfer.effectAllowed = 'move';
+        var item = {
+            id: $(event.target).data('id'),
+            title: event.target.innerHTML,
+            className: 'item',
+            type: "range",
+            content: event.target.innerHTML
+        };
+        var isFixedTimes = (event.target.innerHTML.split('-')[2] && event.target.innerHTML.split('-')[2].trim() == 'fixed times')
+        if (isFixedTimes) {
+          item.start = new Date();
+          item.end = new Date(1000*60*10 + (new Date()).valueOf());
+        }
+        event.dataTransfer.setData("text", JSON.stringify(item));
+    }
+
+    var itemCode = document.querySelectorAll('.item');
+
+    for (var i = itemCode.length - 1; i >= 0; i--) {
+        var item = itemCode[i];
+        item.addEventListener('dragstart', handleDragStart.bind(this), false);
+    }
 });
