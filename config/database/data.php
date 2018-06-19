@@ -28,21 +28,34 @@ DB::table('role_users')->insert([
     ]
 );
 
+\App\Model\Label::insert([
+    [
+        'id' => 1, 
+        'expression' => 'atlas.ouvre(porte)',
+    ],
+    [
+        'id' => 2, 
+        'expression' => 'atlas.prends(boîte)',
+    ],
+    [
+        'id' => 3, 
+        'expression' => 'atlas.marche()',
+    ]
+]);
+
 \App\Model\Sequence::insert([
     [
         'id' => 1,
-        'name' => 'Atlas opens the door',
         'start' => '10',
         'end' => '14',
-        'expression' => 'atlas.open(door)',
-        'video_id' => '2'
+        'video_id' => '2',
+        'label_id' => 1
     ],[
         'id' => 2,
-        'name' => 'Atlas takes the box',
         'start' => '70',
         'end' => '74',
-        'expression' => 'atlas.take(box)',
-        'video_id' => '2'
+        'video_id' => '2',
+        'label_id' => 2
     ]
 ]);
 

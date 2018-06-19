@@ -11,6 +11,7 @@ use App\Model\Video;
 use App\Model\User;
 use App\Model\Sequence;
 use App\Model\Comment;
+use App\Model\Label;
 
 class AppController extends Controller
 {
@@ -274,6 +275,16 @@ class AppController extends Controller
             return $this->redirect($response, 'profile');
         }
 
+        $labels_data = Label::all();
+        $labels = [];
+        foreach($labels_data as $label)
+        {
+            $labels[] = [
+                'id' => $label->id,
+                'expression' => $label->expression
+            ];
+        }
+
         return $this->twig->render(
             $response,
             'app/dashboard.twig',
@@ -281,7 +292,7 @@ class AppController extends Controller
                 'id'   => $video->id,
                 'name' => $video->name,
                 'link' => $video->link,
-                'reactions' => $video->sequences
+                'labels' => $labels
             ]
         );
     }

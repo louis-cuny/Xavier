@@ -47,8 +47,10 @@
                     <li class="list-group-item active text-center">Boîte à outils</li>
                     <li class="list-group-item">
 
-                        <p class="item" draggable="true" data-id="1">test</p>        
-
+                        {% for label in labels %}
+                            <p class="item" draggable="true" data-id="{{ label.id }}">{{ label.expression }}</p> 
+                        {% endfor %}       
+                    
                     </li>
                     <li class="list-group-item">
                         Made...

@@ -14,17 +14,22 @@ Manager::schema()->create('video', function (Blueprint $table) {
     $table->string('name');
     $table->string('link');
     $table->unsignedInteger('user_id');
-    $table->foreign('user_id')->references('id')->on('user')->onDelete('cascade');;
+    $table->foreign('user_id')->references('id')->on('user')->onDelete('cascade');
+});
+
+Manager::schema()->create('label', function (Blueprint $table) {
+    $table->increments('id');
+    $table->string('expression');
 });
 
 Manager::schema()->create('sequence', function (Blueprint $table) {
     $table->increments('id');
-    $table->string('name');
     $table->string('start'); //TODO reprendre le format utilisé par jplayer
     $table->string('end');
-    $table->string('expression');
     $table->unsignedInteger('video_id');
-    $table->foreign('video_id')->references('id')->on('video')->onDelete('cascade');;
+    $table->unsignedInteger('label_id');
+    $table->foreign('video_id')->references('id')->on('video')->onDelete('cascade');
+    $table->foreign('label_id')->references('id')->on('label');
     $table->timestamps();
 });
 
@@ -32,6 +37,6 @@ Manager::schema()->create('comment', function (Blueprint $table) {
     $table->increments('id');
     $table->string('comment');
     $table->unsignedInteger('sequence_id');
-    $table->foreign('sequence_id')->references('id')->on('sequence')->onDelete('cascade');;
+    $table->foreign('sequence_id')->references('id')->on('sequence')->onDelete('cascade');
     $table->timestamps();
 });
