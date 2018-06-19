@@ -3,7 +3,7 @@
 {% block body %}
 
 <div class="container">
-    <h3 >Latest sequences</h3>
+    <h3 >Dernières séquences</h3>
     
     <ul class="list-group">
         {% if sequences %}
@@ -20,7 +20,7 @@
             {% endfor %}
         {% else %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                No clip yet 
+                Il n'y a pas encore de séquences 
             </li>
         {% endif %}
     </ul>    
@@ -28,9 +28,9 @@
     <br>
 
     {% if rand_id %}
-        <h3>Not feeling inspired? Watch a random sequence!</h3>
+        <h3>Pas inspiré ? Regarde une séquence aléatoire !</h3>
         
-        <a href="{{ path_for('comments', {"id": rand_id}) }}" class="btn btn-lg btn-primary" style="color: white">Random sequence</a>
+        <a href="{{ path_for('comments', {"id": rand_id}) }}" class="btn btn-lg btn-primary" style="color: white">Séquence aléatoire</a>
     {% endif %}
 </div>
 

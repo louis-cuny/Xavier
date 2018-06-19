@@ -312,4 +312,65 @@ class AppController extends Controller
                 "link" => $video->link
             ]);
     }
+
+    public function export(Request $request, Response $response)
+    {
+        $sequences = Sequence::orderBy('created_at', 'desc')->get();
+        $sequences_data = [];
+        //$comments = [];
+
+        for($i = 0 ; $i < count($sequences) ; $i++)
+        {
+            $comments = [];
+            foreach($sequences[$i]->comments as $com)
+            {
+                array_push($comments, ["id" => $com->id, "comment" => $com->comment]);
+            }
+
+            $seq_data = [
+                "id" => $sequences[$i]->id,
+                "name" => $sequences[$i]->name,
+                "expression" => $sequences[$i]->expression,
+                "comments" => $comments
+            ];
+
+            array_push($sequences_data, $seq_data);
+        }
+
+        $data = [
+            "sequences" => $sequences_data
+        ];
+
+        return $this->twig->render($response, 'app/export.twig', $data);
+    }
+
+    public function xmlExport(Request $request, Response $response)
+    {
+
+//standby, CSRF erreur
+
+         $xml = new XMLWriter();
+
+        $xml->openURI("php://output");
+        $xml->startDocument();
+        $xml->setIndent(true);
+
+        $xml->startElement('Langage');
+        //for
+          $xml->startElement("Pseudo-langage");
+          $xml->writeAttribute('desc', $_POST['name']);
+          //for
+            $xml->startElement("langage-humain");
+            $xml->writeRaw($_POST['desc']);
+            $xml->endElement();
+          //endfor
+          $xml->endElement();
+        //endfor
+          $xml->endElement();
+
+        header('Content-type: text/xml');
+        $xml->flush();
+    }
+
+
 }

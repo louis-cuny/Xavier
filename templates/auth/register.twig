@@ -6,32 +6,32 @@
         <div class="row">
             <div class="col-sm-6 col-lg-5 col-xl-4">
                 <form class="form-signin" action="{{ path_for('register') }}" method="POST">
-                    <h2 class="form-signin-heading">Create a new account</h2>
-                    <label for="username" class="sr-only">Email address</label>
+                    <h2 class="form-signin-heading">Créer un nouveau compte</h2>
+                    <label for="username" class="sr-only">Nom d'utilisateur</label>
                     <input type="username" id="username" name="username"
                            class="form-control{% if has_error('username') %} has-error has-feedback{% endif %}"
-                           placeholder="Username"
+                           placeholder="Nom d'utilisateur"
                            required>
-                    <label for="email" class="sr-only">Email address</label>
+                    <label for="email" class="sr-only">Adresse Email</label>
                     <input type="email" id="email" name="email"
                            class="form-control{% if has_error('email') %} has-error has-feedback{% endif %}"
-                           placeholder="Email"
+                           placeholder="Adresse Email"
                            required>
-                    <label for="inputPassword" class="sr-only">Password</label>
+                    <label for="inputPassword" class="sr-only">Mot de passe</label>
                     <input type="password" name="password" id="inputPassword"
                            class="form-control{% if has_error('password') %} has-error has-feedback{% endif %}"
-                           placeholder="Password" required>
-                    <label for="inputPasswordConfirm" class="sr-only">Password</label>
+                           placeholder="Mot de passe" required>
+                    <label for="inputPasswordConfirm" class="sr-only">Mot de passe</label>
                     <input type="password" name="password_confirm" id="inputPasswordConfirm"
                            class="form-control{% if has_error('password_confirm') %} has-error has-feedback{% endif %}"
-                           placeholder="Confirm password" required>
+                           placeholder="Confirmer le mot de passe" required>
                     <div class="checkbox">
                         <label>
-                            <input type="checkbox" id="admin" name="admin"> Admin account
+                            <input type="checkbox" id="admin" name="admin"> Compte admin
                         </label>
                     </div>
                     {{ csrf() }}
-                    <button value="Register" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+                    <button value="Register" class="btn btn-lg btn-primary btn-block" type="submit">S'enregistrer</button>
                     {% if has_errors() %}
                         <div>
                             {% for paramErrors in errors() %}
@@ -43,7 +43,7 @@
                     {% endif %}
                 </form>
                 <div>
-                    You already have an account? <a href="{{ path_for('login') }}">Log in</a>
+                    Vous avez déjà un compte ? <a href="{{ path_for('login') }}">Se connecter</a>
                 </div>
             </div>
         </div>

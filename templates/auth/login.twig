@@ -6,24 +6,24 @@
         <div class="row">
             <div class="col-sm-6 col-lg-5 col-xl-4">
                 <form class="form-signin" action="{{ path_for('login') }}" method="POST">
-                    <h2 class="form-signin-heading">Please log in</h2>
-                    <label for="username" class="sr-only">Email address</label>
+                    <h2 class="form-signin-heading">Connexion</h2>
+                    <label for="username" class="sr-only">Addresse Email</label>
                     <input type="text" id="username" name="username"
                            class="form-control{% if has_error('auth') %} has-error has-feedback{% endif %}"
                            placeholder="Username"
                            required autofocus>
-                    <label for="inputPassword" class="sr-only">Password</label>
+                    <label for="inputPassword" class="sr-only">Mot de passe</label>
                     <input type="password" name="password" id="inputPassword" class="form-control"
                            placeholder="Password" required>
                     <div class="checkbox">
                         <label>
-                            <input type="checkbox" id="remember" name="remember"> Remember me
+                            <input type="checkbox" id="remember" name="remember"> Se souvenir de moi
                         </label>
                     </div>
                     {{ csrf() }}
                     <button value="Login"
                             class="btn btn-lg btn-primary btn-block{% if has_error('auth') %} has-error has-feedback{% endif %}"
-                            type="submit">Log in
+                            type="submit">Se connecter
                     </button>
                     {% if has_errors() %}
                         <div>
@@ -34,7 +34,7 @@
                     {% endif %}
                 </form>
                 <div>
-                    New to us? <a href="{{ path_for('register') }}">Sign in</a>
+                    Nouveau ? <a href="{{ path_for('register') }}">S'inscrire</a>
                 </div>
             </div>
         </div>

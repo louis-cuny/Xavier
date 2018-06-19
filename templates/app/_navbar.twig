@@ -12,18 +12,21 @@
                     {% if auth.check() %}
                         {% if auth.inRole('admin') %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path_for('profile') }}">Profile</a>
+                                <a class="nav-link" href="{{ path_for('export') }}">Export XML</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path_for('profile') }}">Profil</a>
                             </li>
                         {% endif %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path_for('logout') }}">Log out</a>
+                            <a class="nav-link" href="{{ path_for('logout') }}"> Se deconnecter</a>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path_for('login') }}">Log in</a>
+                            <a class="nav-link" href="{{ path_for('login') }}">Se connecter</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path_for('register') }}">Register</a>
+                            <a class="nav-link" href="{{ path_for('register') }}">S'inscrire</a>
                         </li>
                     {% endif %}
                 </ul>

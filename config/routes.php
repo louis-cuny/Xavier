@@ -49,3 +49,9 @@ $app->get('/delete/comment/{id}', 'app.controller:deleteComment')
 $app->map(['GET', 'POST'],'/dashboard/{id}' , 'app.controller:dashboard')
     ->add($container['auth.middleware']())
     ->setName('dashboard');
+
+$app->get('/export', 'app.controller:export')->setName('export');
+
+$app->post('/export', 'app.controller:xmlExport')
+    ->add($container['auth.middleware']())
+    ->setName('xml');
