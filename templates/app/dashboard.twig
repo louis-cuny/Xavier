@@ -19,6 +19,10 @@
                     font-weight: bolder;
                 }
 
+                li p.new {
+                    background: #27ae60;
+                }
+
                 li p.item:before {
                     display: inline-block;
                     content: '';
@@ -52,8 +56,9 @@
                         {% endfor %}       
                     
                     </li>
-                    <li class="list-group-item">
-                        Made...
+                    <li id="newLabelList" class="list-group-item">
+                        <button id="createExpression" class="btn btn-block btn-outline-primary" data-toggle="modal" data-target="#createModal">Créer une expression</button>
+                        <p class="text-muted text-center">Seul les expressions utilisées seront ajoutées.</p>
                     </li>
                 </ul>
             </div>
@@ -82,6 +87,38 @@
         </div>
         <br>
     </div>
+
+    <!-- Modal pour créer une nouvelle expression -->
+    <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Créer une expression</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p>Veuillez remplir les champs pour créer une expression.</p>
+                        <p>Les deux premiers champs sont obligatoires.</p>
+
+                        <span class="input-group">
+                            <input id="sujet" class="form-control" type="text" placeholder="robot">
+                            <input id="action" class="form-control" type="text" placeholder="avance">
+                            <input id="argument" class="form-control" type="text" placeholder="10m">
+                        </span>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" onclick="checkCreateExpression()">Créer</button>
+                        <button class="btn btn-danger" data-dismiss="modal">Annuler</a>
+                    </div>
+                </div>
+            </div>
+        </div>
 {% endblock %}
 {% block javascript %}
     <script type="text/javascript" src="{{ asset('/assets/js/bootstrap-slider.min.js') }}"></script>
@@ -138,12 +175,61 @@
             })
 
             var json = JSON.stringify(data, null, 2)
-
-            console.log(json)
             
             $('#formValidation #data').val(json)
             $('#formValidation').submit()
-            //return false
+        }
+
+        function checkCreateExpression() {
+            var sujet = $('#sujet').val()
+            var action = $('#action').val()
+            var argument = $('#argument').val()
+
+            if(sujet === '' || action === '')
+            {
+                alert('Veuillez renseigner les deux premiers champs pour créer une expression.')
+
+                return;
+            }
+
+            var list = $('#newLabelList')
+
+            var uid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);                    
+            var label = $('<p class="item new" draggable="true" data-id="tmp_' + uid + '"></p>')
+            label.append(sujet + '.' + action + '(' + argument + ')')
+            
+            list.append(label)
+
+            var itemCode = document.querySelectorAll('.new');
+
+            for (var i = itemCode.length - 1; i >= 0; i--) {
+                var item = itemCode[i];
+                item.addEventListener('dragstart', handleDragStart.bind(this), false);
+            }
+
+            $('#createModal').modal('hide')
+        }
+
+        function handleDragStart(event) {
+            var dragSrcEl = event.target;
+            
+            event.dataTransfer.effectAllowed = 'move';
+
+            var uid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+            var item = {
+                id: $(event.target).data('id') + '_' + uid,
+                title: event.target.innerHTML,
+                className: 'item',
+                type: "range",
+                content: event.target.innerHTML
+            };
+            var isFixedTimes = (event.target.innerHTML.split('-')[2] && event.target.innerHTML.split('-')[2].trim() == 'fixed times')
+            if (isFixedTimes) {
+                item.start = new Date();
+                item.end = new Date(1000*60*10 + (new Date()).valueOf());
+            }
+            event.dataTransfer.setData("text", JSON.stringify(item));
         }
     </script>
 {% endblock %}

@@ -20,6 +20,7 @@ Manager::schema()->create('video', function (Blueprint $table) {
 Manager::schema()->create('label', function (Blueprint $table) {
     $table->increments('id');
     $table->string('expression');
+    $table->timestamps();
 });
 
 Manager::schema()->create('sequence', function (Blueprint $table) {

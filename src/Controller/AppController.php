@@ -236,7 +236,8 @@ class AppController extends Controller
     {
         if ($request->isPost()) {
             $data = json_decode($_POST['data']);
-
+            
+            $tmpId = [];
             foreach($data as $seq)
             {
                 $newSeq = new Sequence();
@@ -254,10 +255,26 @@ class AppController extends Controller
                 else
                 {
                     // Cas où le label a été créé dynamiquement
+                    if(! array_key_exists($idSeq[1], $tmpId))
+                    {
+                        // Cas ou le label n'existe pas encore
+                        // On crée le label en bdd
+                        $newLabel = new Label();
+                        $newLabel->expression = $seq->content;
+                        $newLabel->save();
 
-                    // On crée le label en bdd
+                        // On l'attribue à notre nouvelle séquence
+                        $newSeq->label_id = $newLabel->id;
 
-                    // On l'attribue à notre nouvelle séquence
+                        // On l'ajoute à la liste des id tmp
+                        $tmpId[$idSeq[1]] = $newLabel->id;
+                    }
+                    else
+                    {
+                        // Cas ou on a créer le label lors d'une itération précédente
+                        $newSeq->label_id = $tmpId[$idSeq[1]];                        
+                    }
+                    
                 }
 
                 $newSeq->save();

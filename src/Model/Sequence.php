@@ -14,7 +14,6 @@ class Sequence extends EloquentUser
         'name',
         'start',
         'end',
-        'expression',
         'video_id',
         'label_id'
     ];
