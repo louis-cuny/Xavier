@@ -44,17 +44,8 @@
                             <ul class="list-group">
                                 {% for seq in v.sequences %}
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        {{ seq.name }}
+                                        <span><b>{{ seq.name }}</b> : {{seq.timing}}</span>
                                         <span class="badge">
-                                            <button class="btn btn-success btn-popover" data-toggle="modal"
-                                                    data-target="#renameSequenceModal"
-                                                    data-link="{{ path_for("renameSequence", {"id": seq.id}) }}"
-                                                    data-toggle="popover" 
-                                                    data-content="Modifier le nom de la séquence"
-                                            >
-                                                <i class="fa fa-pencil"></i>
-                                            </button>     
-                                            
                                             <a href="{{ path_for('comments', { "id": seq.id }) }}" 
                                                 class="btn btn-primary btn-popover"
                                                 data-toggle="popover" 
@@ -170,38 +161,10 @@
 
                         <div class="modal-body">
                             Comment voulez-vous renommer cette vidéo ?
+                            <br><br>
+                            Le nom de vidéo sera visible par les autres utilisateurs, alors évitez de donner un nom trop explicite !
+                            <br><br>
                             <input class="form-control" name="newName" value="" placeholder="Nouveau nom" required>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                            <button type="submit" class="btn btn-success rename-btn" style="color: white">Confirmer
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal when trying to edit the name of a sequence -->
-        <div class="modal fade" id="renameSequenceModal" tabindex="-1" role="dialog" aria-labelledby="renameModalLabel"
-             aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Attention</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-
-                    <form class="rename-sequence-form" action="" method="post">
-                        {{ csrf() }}
-
-                        <div class="modal-body">
-                            Comment voulez-vous renommer cette séquence ?
-                            <input class="form-control" name="newName" value="" placeholder="Nouveau nom"
-                                   required>
                         </div>
 
                         <div class="modal-footer">
@@ -232,8 +195,9 @@
             $('.btn-popover').popover({
                 container: 'body',
                 placement: 'top',
-                title: 'Info',
-                trigger: 'hover'
+                title: '<i class="fa fa-lg fa-info-circle"></i>  <b>Information</b>',
+                trigger: 'hover', 
+                html: true
             })
 
             $('#deleteModal').on('show.bs.modal', function (event) {
@@ -258,14 +222,6 @@
 
               let modal = $(this)
               modal.find('.rename-form').attr("action", recipient)
-            });
-
-            $('#renameSequenceModal').on('show.bs.modal', function (event) {
-              let button = $(event.relatedTarget)
-              let recipient = button.data('link')
-
-              let modal = $(this)
-              modal.find('.rename-sequence-form').attr("action", recipient)
             });
           });
         </script>

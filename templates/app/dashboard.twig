@@ -1,70 +1,235 @@
 {% extends 'layout.twig' %}
     {% block stylesheets %}
-        {#  <script type="text/javascript" src="/assets/js/video.js"></script>#}
-        {#<link href="/assets/css/style.css" rel="stylesheet" type="text/css" />#}
         <link href="/assets/css/bootstrap-slider.min.css" rel="stylesheet" type="text/css"/>
         <link href="/assets/css/customPlayer.css" rel="stylesheet" type="text/css"/>
         <link href="/assets/js/JPlayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css" rel="stylesheet"
               type="text/css"/>
+
+
+        <script src="/assets/js/vis/vis.min.js"></script>
+        <link href="/assets/js/vis/vis.min.css" rel="stylesheet" type="text/css"/>
+
+            <style>
+
+                li p.item {
+                    background: #3498db;
+                    color: #ecf0f1;
+                    padding: 8px;
+                    border-radius: 30px;
+                    font-weight: bolder;
+                }
+
+                li p.new {
+                    background: #27ae60;
+                }
+
+                li p.item:before {
+                    display: inline-block;
+                    content: '';
+                    background: white;
+                    padding: 6px;
+                    border-radius: 50%;
+                    font-weight: bolder;
+                    width: 10px;
+                    height: 10px;
+                    margin-right: 5px;
+                }
+
+            </style>
     {% endblock %}
 {% block body %}
-
     <div class="container">
         <div class="row">
-            <h1 style="margin-bottom: 20px">Create a sequence for "{{ name }}"</h1>
-            <div class="col-sm-8">
+            <h1 style="margin-bottom: 20px">Créer une ou plusieurs séquences pour "{{ name }}"</h1>
+            <div class="col-md-7">
                 <div id="video_container"></div>
                 <input id="video-link" type="hidden" value="{{ link }}">
             </div>
-            <div class="col-sm-4">
 
-                <form action="{{ path_for("dashboard", {"id": id}) }}" method="post">
-                    <input type="hidden" id="video_id" name="video_id" value="{{ id }}">
-                    <div class="form-group">
-                        <label for="name">Name</label>
-                        <input type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp"
-                               placeholder="Enter name">
-                        <small id="nameHelp" class="form-text text-muted">The name of your sequence</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="start">Start</label>
-                        <input type="text" class="form-control" id="start" name="start" aria-describedby="startHelp"
-                               placeholder="Enter start (in seconds)">
-                        <small id="startHelp" class="form-text text-muted">The second who start your sequence</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="end">End</label>
-                        <input type="text" class="form-control" id="end" name="end" aria-describedby="endHelp"
-                               placeholder="Enter end (in seconds)">
-                        <small id="endHelp" class="form-text text-muted">The second who ends your sequence</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="expression">Expression</label>
-                        <input type="text" class="form-control" id="expression" name="expression"
-                               aria-describedby="expressionHelp" placeholder="Enter expression truc.prend(truc)">
-                        <small id="expressionHelp" class="form-text text-muted">The expressions of your sequence</small>
-                    </div>
+            <div class="col-md-4 align-top">
+                <ul class="list-group">
+                    <li class="list-group-item active text-center">Boîte à outils</li>
+                    <li class="list-group-item">
+
+                        {% for label in labels %}
+                            <p class="item" draggable="true" data-id="{{ label.id }}">{{ label.expression }}</p> 
+                        {% endfor %}       
+                    
+                    </li>
+                    <li id="newLabelList" class="list-group-item">
+                        <button id="createExpression" class="btn btn-block btn-outline-primary" data-toggle="modal" data-target="#createModal">Créer une expression</button>
+                        <p class="text-muted text-center">Seul les expressions utilisées seront ajoutées.</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="row block">
+            <div class="col-md-11">
+                <div class="text-muted">Glissez - déposez les expressions dans la timeline pour créer une séquence</div>
+                <!-- Timeline ! -->
+                <div id="timeline"></div>
+
+            </div>
+        
+            <div class="col-md-1">
+                <form id="formValidation" action="{{ path_for("dashboard", {"id": id}) }}" method="post">
                     {{ csrf() }}
-
-                    <button type="submit" class="btn btn-primary">Submit sequence</button>
+                    <input name="data" id="data" type="hidden"></textarea>
+                    <button onclick="loadForm(event)" type="submit" class="btn btn-primary btn-lg" data-toggle="modal"
+                            data-target="#validationModal">
+                        Valider
+                    </button>
                 </form>
             </div>
         </div>
+        <br>
     </div>
+
+    <!-- Modal pour créer une nouvelle expression -->
+    <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Créer une expression</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p>Veuillez remplir les champs pour créer une expression.</p>
+                        <p>Les deux premiers champs sont obligatoires.</p>
+
+                        <span class="input-group">
+                            <input id="sujet" class="form-control" type="text" placeholder="robot">
+                            <input id="action" class="form-control" type="text" placeholder="avance">
+                            <input id="argument" class="form-control" type="text" placeholder="10m">
+                        </span>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" onclick="checkCreateExpression()">Créer</button>
+                        <button class="btn btn-danger" data-dismiss="modal">Annuler</a>
+                    </div>
+                </div>
+            </div>
+        </div>
 {% endblock %}
 {% block javascript %}
     <script type="text/javascript" src="{{ asset('/assets/js/bootstrap-slider.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('/assets/js/JPlayer/dist/jplayer/jquery.jplayer.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('/assets/js/customPlayer.js') }}"></script>
 
+    <script src="{{ asset('/assets/js/initTimeline.js') }}"></script>
+
     <script>
-      CustomPlayer($('#video_container'),
-        function () {
-          let videoLink = "/" + document.getElementById("video-link").value
-          setVideo("{{ name }}", videoLink)
-          /*setDebut()*/
-          /*setFin()*/
-          initialize()
+        $(document).ready(function () {
+
+            player = new CustomPlayer($('#video_container'),
+                function () {
+                    let videoLink = "/" + document.getElementById("video-link").value
+                    player.setVideo("{{ name }}", videoLink)
+                    /*setDebut()*/
+                    /*setFin()*/
+                    player.initialize(initializeTimeline)
+                })
+            timeline.redraw()
+
+            $('formValidation #data').popover({
+                trigger: 'manual',
+                title: 'Pas de séquence à créer !',
+                placement: 'top',
+                delay: { "hide": 500 }
+            })
         })
+
+        function loadForm(event) {
+            event.preventDefault()
+            var data = items.get({
+                type: {
+                    start: 'ISODate',
+                    end: 'ISODate'
+                }
+            })
+
+            data = data.filter(e => e.id != 'background')
+
+            if(data.length == 0)
+            {
+                alert('Pas de séquence à créer !')
+
+                return false
+            }
+
+            data.map(e => {
+                var tmp = vis.moment(e.start).format('HH:mm:ss')
+                e.start = vis.moment.duration(tmp).asSeconds()
+
+                var tmp = vis.moment(e.end).format('HH:mm:ss')
+                e.end = vis.moment.duration(tmp).asSeconds()
+            })
+
+            var json = JSON.stringify(data, null, 2)
+            
+            $('#formValidation #data').val(json)
+            $('#formValidation').submit()
+        }
+
+        function checkCreateExpression() {
+            var sujet = $('#sujet').val()
+            var action = $('#action').val()
+            var argument = $('#argument').val()
+
+            if(sujet === '' || action === '')
+            {
+                alert('Veuillez renseigner les deux premiers champs pour créer une expression.')
+
+                return;
+            }
+
+            var list = $('#newLabelList')
+
+            var uid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);                    
+            var label = $('<p class="item new" draggable="true" data-id="tmp_' + uid + '"></p>')
+            label.append(sujet + '.' + action + '(' + argument + ')')
+            
+            list.append(label)
+
+            var itemCode = document.querySelectorAll('.new');
+
+            for (var i = itemCode.length - 1; i >= 0; i--) {
+                var item = itemCode[i];
+                item.addEventListener('dragstart', handleDragStart.bind(this), false);
+            }
+
+            $('#createModal').modal('hide')
+        }
+
+        function handleDragStart(event) {
+            var dragSrcEl = event.target;
+            
+            event.dataTransfer.effectAllowed = 'move';
+
+            var uid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+            var item = {
+                id: $(event.target).data('id') + '_' + uid,
+                title: event.target.innerHTML,
+                className: 'item',
+                type: "range",
+                content: event.target.innerHTML
+            };
+            var isFixedTimes = (event.target.innerHTML.split('-')[2] && event.target.innerHTML.split('-')[2].trim() == 'fixed times')
+            if (isFixedTimes) {
+                item.start = new Date();
+                item.end = new Date(1000*60*10 + (new Date()).valueOf());
+            }
+            event.dataTransfer.setData("text", JSON.stringify(item));
+        }
     </script>
 {% endblock %}
