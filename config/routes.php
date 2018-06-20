@@ -50,8 +50,10 @@ $app->map(['GET', 'POST'],'/dashboard/{id}' , 'app.controller:dashboard')
     ->add($container['auth.middleware']())
     ->setName('dashboard');
 
-$app->get('/export', 'app.controller:export')->setName('export');
+$app->get('/export', 'app.controller:export')
+    ->add($container['auth.middleware']())
+    ->setName('export');
 
-$app->post('/export', 'app.controller:xmlExport')
+$app->post('/xml', 'app.controller:xmlExport')
     ->add($container['auth.middleware']())
     ->setName('xml');

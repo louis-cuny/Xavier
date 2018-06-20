@@ -6,32 +6,33 @@
     <h3 >Descriptions</h3>
     
     <form action="{{ path_for('xml') }}" method="post">
-    <ul class="list-group">
-        {% if sequences %}
-            {% for seq in sequences %}
+        {{ csrf() }}
+        <ul class="list-group">
+            {% if sequences %}
+                {% for seq in sequences %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ seq.expression }} <input type="checkbox">
+                    </li>
+                        <ul>
+                            {% if seq.comments %}
+                                {% for com in seq.comments %}
+                                <li>
+                                    {{ com.comment }} <input id=" {{ com.id }}" type="checkbox" name="{{ seq.expression }}[]" value="{{ com.comment }}">
+                                </li>
+                                {% endfor %}
+                            {% else %}
+                                <li>
+                                    Il n'y a pas encore de commentaire
+                                </li>
+                            {% endif %}
+                        </ul>
+                {% endfor %}
+            {% else %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    {{ seq.expression }} <input id=" {{ seq.id }}" type="checkbox" name="{{ seq.name }}">
+                    Il n'y a pas encore de donnée
                 </li>
-                    <ul>
-                        {% if seq.comments %}
-                            {% for com in seq.comments %}
-                            <li>
-                                {{ com.comment }} <input id=" {{ com.id }}" type="checkbox" name="{{ seq.id }}">
-                            </li>
-                            {% endfor %}
-                        {% else %}
-                            <li>
-                                Il n'y a pas encore de commentaire
-                            </li>
-                        {% endif %}
-                    </ul>
-            {% endfor %}
-        {% else %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                Il n'y a pas encore de donnée
-            </li>
-        {% endif %}
-    </ul>    
+            {% endif %}
+        </ul>    
 
     <br>
         

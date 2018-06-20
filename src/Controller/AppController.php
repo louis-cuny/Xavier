@@ -349,7 +349,13 @@ class AppController extends Controller
 
 //standby, CSRF erreur
 
-         $xml = new XMLWriter();
+/*        $sequences = Sequence::orderBy('created_at', 'desc')->get();
+        for($i = 0 ; $i < count($sequences) ; $i++)
+        {
+            $request->request->get('form');
+        }
+
+         $xml = new \XMLWriter();
 
         $xml->openURI("php://output");
         $xml->startDocument();
@@ -370,6 +376,79 @@ class AppController extends Controller
 
         header('Content-type: text/xml');
         $xml->flush();
+
+
+       $dir = getcwd().'/xml';
+
+    if (!is_dir($dir)) {
+        mkdir($dir, 0700);
+    }
+
+        */
+
+        //return var_dump($_POST);
+
+        $xml = new \XMLWriter();
+        $xml->openMemory();
+        $xml->openURI("php://output");
+        $xml->setIndent(true);
+        $xml->startDocument('1.0', 'UTF-8');
+        $xml->startElement('Vocabulaire');
+        foreach($_POST as $key => $value) {
+            if($key != 'csrf_name' && $key != 'csrf_value'){
+                $xml->startElement('Expression');
+                    $xml->startElement('Pseudo-langage');
+                         $xml->writeRaw($key);
+                    $xml->endElement();
+                if(is_array($value)){
+                     for($i = 0 ; $i < count($value) ; $i++){
+                        $xml->startElement('Synonyme');
+                             $xml->writeRaw($value[$i]);
+                        $xml->endElement();
+                     }
+                }else{
+                    $xml->startElement('Synonyme');
+                        $xml->writeRaw($value);
+                    $xml->endElement();
+                }
+                $xml->endElement();    
+            }
+        }
+        $xml->endElement();
+
+        $xml->flush();
+        $xml->endDocument(); 
+        header('Content-type: text/xml');
+        header('Content-Disposition: attachment; filename=example.xml');
+        echo $xml->outputMemory();
+        
+        //file_put_contents('articles.xml', $xml->outputMemory());
+
+       /* 
+        $data = [];
+        $str = "";
+
+       foreach($_POST as $key => $value) {
+            if($key != 'csrf_name' && $key != 'csrf_value'){
+                $str = "'$key' => [";
+                if(is_array($value)){
+                    $str = $str."'$value[0]'";
+                     for($i = 1 ; $i < count($value) ; $i++){
+                        $str = $str.", '$value[$i]'";
+                     }
+                }else{
+                    $str=$str."'$value'";
+                }
+                $str=$str."]";
+                array_push($data, $str);    
+            }
+            
+        }
+        $dato = [
+            "phrases" => $data
+        ];
+
+        return $this->twig->render($response, 'app/xml.twig', $dato);*/
     }
 
 
