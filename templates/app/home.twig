@@ -9,7 +9,7 @@
         {% if sequences %}
             {% for seq in sequences %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    {{ seq.name }}
+                    <span><b>{{ seq.name }}</b> ({{ seq.timing }})</span>
 
                     <span class="badge">                        
                         <a href="{{ path_for('comments', { "id": seq.id }) }}" class="btn btn-primary">

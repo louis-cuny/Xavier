@@ -14,13 +14,18 @@ class Sequence extends EloquentUser
         'name',
         'start',
         'end',
-        'expression',
-        'video_id'
+        'video_id',
+        'label_id'
     ];
 
     public function video()
     {
         return $this->belongsTo('App\Model\Video', 'video_id');
+    }
+
+    public function label()
+    {
+        return $this->belongsTo('App\Model\Label', 'label_id');
     }
 
     public function comments()
