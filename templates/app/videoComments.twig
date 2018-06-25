@@ -51,6 +51,7 @@
         </div>
 
         {% if not isAdmin %}
+            {% if not commented %}
             <form action="{{ path_for('addComment', {"id": id}) }}" method="post">
                 {{ csrf() }}
                 <div class="form-group">
@@ -60,6 +61,12 @@
                     <input type="submit" class="btn btn-lg btn-primary" value="Envoyer">
                 </div>
             </form>
+            {% else %}
+                <br>
+                <h3>Mon commentaire :</h3>
+                <p>{{ your_comment }}</p>
+                <!--<p><i>Vous avez déjà commenter cette vidéo. Pour assurer les données, seuls les adminastrateurs du site peuvent manipuler vos commentaires.</i></p>-->
+            {% endif %}    
         {% endif %}
         
         <!-- Modal when trying to delete a video -->

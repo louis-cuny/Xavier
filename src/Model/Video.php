@@ -13,7 +13,8 @@ class Video extends Model
 
     protected $fillable = [
         'link',
-        'name'
+        'name',
+        'estVisible'
     ];
 
     public function user()

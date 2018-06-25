@@ -87,6 +87,7 @@ class AuthController extends Controller
     public function logout(Request $request, Response $response)
     {
         $this->auth->logout();
+        $this->flash('success', 'Vous vous êtes déconnecté avec succès.');
         return $this->redirect($response, 'home');
     }
 }

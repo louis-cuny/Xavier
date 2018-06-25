@@ -17,6 +17,7 @@ class AppController extends Controller
 {
     public function home(Request $request, Response $response)
     {
+
         $sequences = Sequence::orderBy('created_at', 'desc')->get();
         $sequences_data = [];
 
@@ -26,15 +27,24 @@ class AppController extends Controller
             $seq_data = [
                 "id"   => $sequences[$i]->id,
                 "name" => $sequences[$i]->video->name,
-                "timing" => $sequences[$i]->start . ' - ' . $sequences[$i]->end
+                "estVisible" => $sequences[$i]->video->estVisible,
+                "timing" => $sequences[$i]->start . ' - ' . $sequences[$i]->end,
+                "duration" => $sequences[$i]->end - $sequences[$i]->start 
+                
             ];
 
-            array_push($sequences_data, $seq_data);
+            //if($sequences[$i]->video->visible){
+                array_push($sequences_data, $seq_data);
+            /*}else{
+                if($this->auth->getUser()){
+                    array_push($sequences_data, $seq_data);
+                }
+            }*/
         }
 
         $data = [
             "rand_id"   => count($sequences) > 0 ? $sequences[rand(0, count($sequences) - 1)]->id : null,
-            "sequences" => $sequences_data
+            "sequences" => $sequences_data,
         ];
 
         return $this->twig->render($response, 'app/home.twig', $data);
@@ -67,9 +77,12 @@ class AppController extends Controller
             array_push($videos_data, $current_vid);
         }
 
+        $commentaires = Comment::where('user_id', '=', $user_id)->orderBy('id', 'desc')->get();
+
         $data =
             [
-                "videos" => $videos_data
+                "videos" => $videos_data,
+                "commentaires" => $commentaires
             ];
 
         return $this->twig->render($response, 'app/profile.twig', $data);
@@ -111,12 +124,12 @@ class AppController extends Controller
                 unlink($video->link);
                 $video->delete();
 
-                $this->flash('success', 'The video has been deleted successfully.');
+                $this->flash('success', 'La vidéo a été supprimée avec succès.');
             } else {
-                $this->flash('danger', 'The video you are trying to delete does not seem to exist.');
+                $this->flash('danger', 'La vidéo que vous essayez de supprimer ne semble pas exister.');
             }
         } else {
-            $this->flash('danger', 'The video you are trying to delete does not seem to belong to you.');
+            $this->flash('danger', 'La vidéo que vous essayez de supprimer ne semble pas vous appartenir.');
         }
 
         return $this->redirect($response, 'profile');
@@ -128,15 +141,18 @@ class AppController extends Controller
             $video = Video::find($id);
 
             if ($video && $video->user->id === $user->id) {
-                $video->name = filter_var($request->getParsedBody()['newName'], FILTER_DEFAULT);
+                if(!is_null($request->getParsedBody()['newName'])){
+                    $video->name = filter_var($request->getParsedBody()['newName'], FILTER_DEFAULT);
+                }
+                $video->visible = $request->getParsedBody()['isVisible'];
                 $video->update();
 
-                $this->flash('success', 'The video has been renamed successfully.');
+                $this->flash('success', 'La vidéo a été modifiée avec succès.');
             } else {
-                $this->flash('danger', 'The video you are trying to rename does not seem to exist.');
+                $this->flash('danger', 'La vidéo que vous essayez de changer ne semble pas exister.');
             }
         } else {
-            $this->flash('danger', 'The video you are trying to rename does not seem to belong to you.');
+            $this->flash('danger', 'La vidéo que vous essayez de changer ne semble pas vous appartenir.');
         }
 
         return $this->redirect($response, 'profile');
@@ -145,14 +161,14 @@ class AppController extends Controller
     public function deleteSequence(Request $request, Response $response, $id)
     {
         if (!$sequence = Sequence::find($id)) {
-            $this->flash('danger', 'The sequence you are trying to delete does not seem to exist.');
+            $this->flash('danger', 'La séquence que vous essayez de supprimer ne semble pas exister.');
 
             return $this->redirect($response, 'profile');
         }
 
         $video = $sequence->video;
         if (!$video->user->id === $this->auth->getUser()->id) {
-            $this->flash('danger', 'The sequence you are trying to delete does not seem to belong to you.');
+            $this->flash('danger', 'La séquence que vous essayez de suppriler ne semble pas vous appartenir.');
 
             return $this->redirect($response, 'profile');
         }
@@ -166,18 +182,34 @@ class AppController extends Controller
 
     public function displayComments(Request $request, Response $response, $id)
     {
+
+        $user_id = $this->auth->getUser()->id;
+
         if (!$seq = Sequence::find($id)) {
-            $this->flash('danger', 'The sequence you are trying to watch does not seem to exist.');
+            $this->flash('danger', 'La séquence que vous essayez de regarder ne semble pas exister.');
 
             return $this->redirect($response, 'home');
         }
 
         $video = $seq->video;
 
+        if (is_null($user_id) && !$video->visible) {
+            $this->flash('danger', 'La séquence que vous essayez de regarder ne vous est pas accessible.');
+
+            return $this->redirect($response, 'home');
+        }
+
         $comments = [];
+
+        $commented = false;
+        $your_comment = '';
 
         foreach ($seq->comments as $com) {
             array_push($comments, ["id" => $com->id, "comment" => $com->comment]);
+            if($com->user_id == $user_id && !is_null($user_id)){
+                $commented = true;
+                $your_comment = $com->comment;
+            }
         }
 
         $data = [
@@ -188,7 +220,9 @@ class AppController extends Controller
             'name' => $seq->label->expression,
             'link'     => $video->link,
             'comments' => $comments,
-            'isAdmin'  => $this->auth->getUser() && ($video->user_id === $this->auth->getUser()->id)
+            'isAdmin'  => $this->auth->getUser() && ($video->user_id === $this->auth->getUser()->id),
+            'commented' => $commented,
+            'your_comment' => $your_comment
         ];
 
         return $this->twig->render($response, 'app/videoComments.twig', $data);
@@ -196,20 +230,46 @@ class AppController extends Controller
 
     public function addComment(Request $request, Response $response, $id)
     {
+
         if (!$sequence = Sequence::find($id)) {
-            $this->flash('danger', 'You are trying to comment on a non-existing sequence.');
+            $this->flash('danger', "Vous essayez de commenter une séquence qui n'existe pas.");
+
+            return $this->redirect($response, 'home');
+        }
+
+        $vid = $sequence->video()->get();
+
+        if ($vid->user_id == $user_id) {
+            $this->flash('danger', "Vous essayez de commenter votre séquence.");
+
+            return $this->redirect($response, 'home');
+        }
+
+        if (is_null($user_id) && !$vid->visible) {
+            $this->flash('danger', 'La séquence que vous essayez de commenter ne vous est pas accessible.');
 
             return $this->redirect($response, 'home');
         }
 
         $text = $request->getParsedBody()['comment'];
 
+        $current_user = $this->auth->getUser();
+
+        foreach ($sequence->comments as $com) {
+            if($com->user_id == $user_id){
+                $this->flash('danger', "Vous essayez de commenter plusieurs fois une même séquence.");
+
+                return $this->redirect($response, 'home');
+            }
+        }
+
         $comment = new Comment();
         $comment->comment = filter_var($text, FILTER_DEFAULT);
         $comment->sequence_id = $id;
+        $comment->user_id =  $current_user->id;
         $comment->save();
 
-        $this->flash('success', 'Your comment has been successfully sent.');
+        $this->flash('success', 'Votre commentaire a été envoyé avec succès.');
 
         return $this->redirect($response, 'home');
     }
@@ -217,7 +277,7 @@ class AppController extends Controller
     public function deleteComment(Request $request, Response $response, $id)
     {
         if (!$comment = Comment::find($id)) {
-            $this->flash('success', 'The comment you are trying to delete does not seem to exist.');
+            $this->flash('success', "Le commentaire que vous essayez de supprimer n'a pas l'air d'exister.");
 
             return $this->redirect($response, 'home');
         }
@@ -225,7 +285,7 @@ class AppController extends Controller
         $id_sequence = $comment->sequence->id;
         $comment->delete();
 
-        $this->flash('success', 'The comment has been successfully deleted.');
+        $this->flash('success', 'Le commentaire a été supprimer avec succès.');
 
         $url = $this->router->pathFor('comments', ['id' => $id_sequence]);
 
@@ -290,7 +350,7 @@ class AppController extends Controller
 
         // Checking if the video exists
         if (!$video = Video::find($id)) {
-            $this->flash('danger', 'The video you are trying to access does not seem to exist.');
+            $this->flash('danger', "La vidéo n'a pas l'air d'exister.");
 
             return $this->redirect($response, 'profile');
         }
@@ -299,7 +359,7 @@ class AppController extends Controller
         $current_user = $this->auth->getUser();
 
         if (!$video->user_id === $current_user->id) {
-            $this->flash('danger', 'The video you are trying to access does not seem to belong to you.');
+            $this->flash('danger', "La vidéo n'a pas l'air de vous appartenir.");
 
             return $this->redirect($response, 'profile');
         }
@@ -359,48 +419,6 @@ class AppController extends Controller
 
     public function xmlExport(Request $request, Response $response)
     {
-
-//standby, CSRF erreur
-
-/*        $sequences = Sequence::orderBy('created_at', 'desc')->get();
-        for($i = 0 ; $i < count($sequences) ; $i++)
-        {
-            $request->request->get('form');
-        }
-
-         $xml = new \XMLWriter();
-
-        $xml->openURI("php://output");
-        $xml->startDocument();
-        $xml->setIndent(true);
-
-        $xml->startElement('Langage');
-        //for
-          $xml->startElement("Pseudo-langage");
-          $xml->writeAttribute('desc', $_POST['name']);
-          //for
-            $xml->startElement("langage-humain");
-            $xml->writeRaw($_POST['desc']);
-            $xml->endElement();
-          //endfor
-          $xml->endElement();
-        //endfor
-          $xml->endElement();
-
-        header('Content-type: text/xml');
-        $xml->flush();
-
-
-       $dir = getcwd().'/xml';
-
-    if (!is_dir($dir)) {
-        mkdir($dir, 0700);
-    }
-
-        */
-
-        //return var_dump($_POST);
-
         $xml = new \XMLWriter();
         $xml->openMemory();
         $xml->openURI("php://output");
@@ -432,36 +450,9 @@ class AppController extends Controller
         $xml->flush();
         $xml->endDocument(); 
         header('Content-type: text/xml');
-        header('Content-Disposition: attachment; filename=example.xml');
+        header('Content-Disposition: attachment; filename=xavier_export.xml');
         echo $xml->outputMemory();
         
-        //file_put_contents('articles.xml', $xml->outputMemory());
-
-       /* 
-        $data = [];
-        $str = "";
-
-       foreach($_POST as $key => $value) {
-            if($key != 'csrf_name' && $key != 'csrf_value'){
-                $str = "'$key' => [";
-                if(is_array($value)){
-                    $str = $str."'$value[0]'";
-                     for($i = 1 ; $i < count($value) ; $i++){
-                        $str = $str.", '$value[$i]'";
-                     }
-                }else{
-                    $str=$str."'$value'";
-                }
-                $str=$str."]";
-                array_push($data, $str);    
-            }
-            
-        }
-        $dato = [
-            "phrases" => $data
-        ];
-
-        return $this->twig->render($response, 'app/xml.twig', $dato);*/
     }
 
 

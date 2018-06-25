@@ -28,6 +28,10 @@ $app->post('/rename/video/{id}', 'app.controller:renameVideo')
     ->add($container['auth.middleware']())
     ->setName('renameVideo');
 
+$app->post('/visible/video/{id}', 'app.controller:visibleVideo')
+    ->add($container['auth.middleware']())
+    ->setName('visibleVideo');
+
 $app->get('/delete/sequence/{id}', 'app.controller:deleteSequence')
     ->add($container['auth.middleware']())
     ->setName('deleteSequence');
