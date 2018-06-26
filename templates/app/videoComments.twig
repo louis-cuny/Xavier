@@ -91,7 +91,7 @@
                 </div>
             </div>
         </div>
-
+    </div>
         <script>
             $(document).ready(function() 
             {
@@ -102,7 +102,7 @@
                     let modal = $(this)
                     modal.find('.delete-btn').attr("href", recipient)
                 });
-            })
+            });
         </script>    
     </div>
 {% endblock %}
@@ -120,6 +120,6 @@
           let videoEnd = document.getElementById("video-end").value
           setVideo("{{ name }}", videoLink, videoStart, videoEnd)
           initialize()
-        })
+        });
     </script>
 {% endblock %}

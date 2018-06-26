@@ -21,19 +21,25 @@ class AppController extends Controller
         $sequences = Sequence::orderBy('created_at', 'desc')->get();
         $sequences_data = [];
 
+        $videos = Video::where('estVisible', '=', 1)->get();
+        $videos_data = [];
+        for ($i = 0; $i < sizeof($videos); $i++) {
+            array_push($videos_data, $videos[$i]->id);
+        }
+
         $nb = 5;
         $max_nb = count($sequences) < $nb ? count($sequences) : $nb;
         for ($i = 0; $i < $max_nb; $i++) {
             $seq_data = [
                 "id"   => $sequences[$i]->id,
                 "name" => $sequences[$i]->video->name,
-                "estVisible" => $sequences[$i]->video->estVisible,
+                "video_id" => $sequences[$i]->video->id,
                 "timing" => $sequences[$i]->start . ' - ' . $sequences[$i]->end,
                 "duration" => $sequences[$i]->end - $sequences[$i]->start 
                 
             ];
 
-            //if($sequences[$i]->video->visible){
+            //if($sequences[$i]->video->estVisible){
                 array_push($sequences_data, $seq_data);
             /*}else{
                 if($this->auth->getUser()){
@@ -45,6 +51,7 @@ class AppController extends Controller
         $data = [
             "rand_id"   => count($sequences) > 0 ? $sequences[rand(0, count($sequences) - 1)]->id : null,
             "sequences" => $sequences_data,
+            "videos" => $videos_data
         ];
 
         return $this->twig->render($response, 'app/home.twig', $data);
@@ -144,7 +151,7 @@ class AppController extends Controller
                 if(!is_null($request->getParsedBody()['newName'])){
                     $video->name = filter_var($request->getParsedBody()['newName'], FILTER_DEFAULT);
                 }
-                $video->visible = $request->getParsedBody()['isVisible'];
+                $video->estVisible = $request->getParsedBody()['isVisible'];
                 $video->update();
 
                 $this->flash('success', 'La vidéo a été modifiée avec succès.');
@@ -183,7 +190,12 @@ class AppController extends Controller
     public function displayComments(Request $request, Response $response, $id)
     {
 
-        $user_id = $this->auth->getUser()->id;
+        $usr = $this->auth->getUser();
+        if($usr != null){
+            $user_id = $this->auth->getUser()->id;
+        }else{
+            $user_id = null;
+        }
 
         if (!$seq = Sequence::find($id)) {
             $this->flash('danger', 'La séquence que vous essayez de regarder ne semble pas exister.');
@@ -193,7 +205,13 @@ class AppController extends Controller
 
         $video = $seq->video;
 
-        if (is_null($user_id) && !$video->visible) {
+        $videos = Video::where('estVisible', '=', 1)->get();
+        $videos_data = [];
+        for ($i = 0; $i < sizeof($videos); $i++) {
+            array_push($videos_data, $videos[$i]->id);
+        }
+
+        if (is_null($user_id) && !in_array($seq->video->id, $videos_data)) {
             $this->flash('danger', 'La séquence que vous essayez de regarder ne vous est pas accessible.');
 
             return $this->redirect($response, 'home');
@@ -231,21 +249,35 @@ class AppController extends Controller
     public function addComment(Request $request, Response $response, $id)
     {
 
+        $usr = $this->auth->getUser();
+        if($usr != null){
+            $user_id = $this->auth->getUser()->id;
+        }else{
+            $user_id = null;
+        }
+        
+        $videos = Video::where('estVisible', '=', 1)->get();
+        $videos_data = [];
+        for ($i = 0; $i < sizeof($videos); $i++) {
+            array_push($videos_data, $videos[$i]->id);
+        }
+
         if (!$sequence = Sequence::find($id)) {
             $this->flash('danger', "Vous essayez de commenter une séquence qui n'existe pas.");
 
             return $this->redirect($response, 'home');
         }
 
-        $vid = $sequence->video()->get();
+        $vid = $sequence->video_id;
+        $vid_user = $sequence->video;
 
-        if ($vid->user_id == $user_id) {
+        if ($user_id == $vid_user->user_id) {
             $this->flash('danger', "Vous essayez de commenter votre séquence.");
 
             return $this->redirect($response, 'home');
         }
 
-        if (is_null($user_id) && !$vid->visible) {
+        if (is_null($user_id) && !in_array($vid, $videos_data)) {
             $this->flash('danger', 'La séquence que vous essayez de commenter ne vous est pas accessible.');
 
             return $this->redirect($response, 'home');
@@ -253,10 +285,10 @@ class AppController extends Controller
 
         $text = $request->getParsedBody()['comment'];
 
-        $current_user = $this->auth->getUser();
+       //$current_user = $this->auth->getUser();
 
         foreach ($sequence->comments as $com) {
-            if($com->user_id == $user_id){
+            if($com->user_id == $user_id && $user_id != null){
                 $this->flash('danger', "Vous essayez de commenter plusieurs fois une même séquence.");
 
                 return $this->redirect($response, 'home');
@@ -266,7 +298,7 @@ class AppController extends Controller
         $comment = new Comment();
         $comment->comment = filter_var($text, FILTER_DEFAULT);
         $comment->sequence_id = $id;
-        $comment->user_id =  $current_user->id;
+        $comment->user_id =  $user_id;
         $comment->save();
 
         $this->flash('success', 'Votre commentaire a été envoyé avec succès.');
@@ -453,6 +485,32 @@ class AppController extends Controller
         header('Content-Disposition: attachment; filename=xavier_export.xml');
         echo $xml->outputMemory();
         
+    }
+
+    public function ensemble(Request $request, Response $response)
+    {
+
+        $sequences = Sequence::orderBy('created_at', 'desc')->get();
+        $sequences_data = [];
+
+        for ($i = 0; $i < sizeof($sequences); $i++) {
+            $seq_data = [
+                "id"   => $sequences[$i]->id,
+                "name" => $sequences[$i]->video->name,
+                "video_id" => $sequences[$i]->video->id,
+                "timing" => $sequences[$i]->start . ' - ' . $sequences[$i]->end,
+                "duration" => $sequences[$i]->end - $sequences[$i]->start 
+                
+            ];
+
+                array_push($sequences_data, $seq_data);
+        }
+
+        $data = [
+            "sequences" => $sequences_data
+        ];
+
+        return $this->twig->render($response, 'app/ensemble.twig', $data);
     }
 
 

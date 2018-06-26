@@ -3,13 +3,13 @@
 {% block body %}
 
 <div class="container">
-    <h3 >Dernières séquences</h3>
+    <h3 >Toutes les séquences</h3>
     
     <ul class="list-group">
-
+{% if auth.check() %}
+{% if auth.inRole('admin') %}
         {% if sequences %}
             {% for seq in sequences %}
-                {% if (auth.check()) or (seq.video_id in videos) %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <span><b>{{ seq.name }}</b> ({{ seq.duration }}s)</span>
                         
@@ -19,22 +19,19 @@
                         </a>                              
                     </span>
                 </li>
-            {% endif %} 
             {% endfor %}
         {% else %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 Il n'y a pas encore de séquences 
             </li>
         {% endif %}
+{% else %}
+    <p>Vous n'êtez pas autorisé à consulter cette page.</p>
+{% endif %}
+{% endif %}
     </ul>    
 
     <br>
-
-    {% if rand_id %}
-        <h3>Pas inspiré ? Regarde une séquence aléatoire !</h3>
-        
-        <a href="{{ path_for('comments', {"id": rand_id}) }}" class="btn btn-lg btn-primary" style="color: white">Séquence aléatoire</a>
-    {% endif %}
 </div>
 
 {% endblock %}

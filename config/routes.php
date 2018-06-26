@@ -61,3 +61,7 @@ $app->get('/export', 'app.controller:export')
 $app->post('/xml', 'app.controller:xmlExport')
     ->add($container['auth.middleware']())
     ->setName('xml');
+
+$app->get('/vue_d_ensemble', 'app.controller:ensemble')
+    ->add($container['auth.middleware']())
+    ->setName('vueensemble');
