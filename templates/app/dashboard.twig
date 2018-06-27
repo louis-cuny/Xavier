@@ -1,13 +1,13 @@
 {% extends 'layout.twig' %}
     {% block stylesheets %}
-        <link href="/assets/css/bootstrap-slider.min.css" rel="stylesheet" type="text/css"/>
-        <link href="/assets/css/customPlayer.css" rel="stylesheet" type="text/css"/>
-        <link href="/assets/js/JPlayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css" rel="stylesheet"
+        <link href="{{ asset('assets/css/bootstrap-slider.min.css') }}" rel="stylesheet" type="text/css"/>
+        <link href="{{ asset('assets/css/customPlayer.css') }}" rel="stylesheet" type="text/css"/>
+        <link href="{{ asset('assets/js/JPlayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css') }}" rel="stylesheet"
               type="text/css"/>
 
 
-        <script src="/assets/js/vis/vis.min.js"></script>
-        <link href="/assets/js/vis/vis.min.css" rel="stylesheet" type="text/css"/>
+        <script src="{{ asset('assets/js/vis/vis.min.js') }}"></script>
+        <link href="{{ asset('assets/js/vis/vis.min.css') }}" rel="stylesheet" type="text/css"/>
 
             <style>
 
@@ -133,7 +133,7 @@
             player = new CustomPlayer($('#video_container'),
                 function () {
                     let videoLink = "/" + document.getElementById("video-link").value
-                    player.setVideo("{{ name }}", videoLink)
+                    player.setVideo("{{ name }}", '{{ asset('') }}' + videoLink)
                     /*setDebut()*/
                     /*setFin()*/
                     player.initialize(initializeTimeline)
