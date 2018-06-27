@@ -7,9 +7,9 @@
 {% block stylesheets %}
     {#  <script type="text/javascript" src="/assets/js/video.js"></script>#}
     {#<link href="/assets/css/style.css" rel="stylesheet" type="text/css" />#}
-    <link href="/assets/css/bootstrap-slider.min.css" rel="stylesheet" type="text/css"/>
-    <link href="/assets/css/customPlayer.css" rel="stylesheet" type="text/css"/>
-    <link href="/assets/js/JPlayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css" rel="stylesheet"
+    <link href="{{ asset('assets/css/bootstrap-slider.min.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/css/customPlayer.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/js/JPlayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css') }}" rel="stylesheet"
         type="text/css"/>
 {% endblock %}
 
@@ -115,7 +115,7 @@
     <script>
       CustomPlayer($('#video_container'),
         function () {
-          let videoLink = "/" + document.getElementById("video-link").value
+          let videoLink = '{{ asset('') }}' + "/" + document.getElementById("video-link").value
           let videoStart = document.getElementById("video-start").value
           let videoEnd = document.getElementById("video-end").value
           setVideo("{{ name }}", videoLink, videoStart, videoEnd)
