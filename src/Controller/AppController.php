@@ -6,7 +6,7 @@ use Awurth\Slim\Helper\Controller\Controller;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Http\UploadedFile;
-
+use Cartalyst\Sentinel\Sentinel;
 use App\Model\Video;
 use App\Model\User;
 use App\Model\Sequence;
@@ -513,5 +513,60 @@ class AppController extends Controller
         return $this->twig->render($response, 'app/ensemble.twig', $data);
     }
 
+    public function admin(Request $request, Response $response)
+    {
+
+        $users = $this->auth->getUserRepository()->with('roles')->get();
+        $users_data = [];
+
+        foreach($users as $key => $value) {
+            $usr_data = [
+                "user"   => $value 
+            ];
+
+                array_push($users_data, $usr_data);
+        }
+        
+        $data = [
+            "tab" => $users_data
+        ];
+
+        return $this->twig->render($response, 'app/admin.twig', $data);
+    }
+
+    public function changeAdmin(Request $request, Response $response)
+    {
+        $role = $_Post['role'];
+        $roleDel = 0;
+
+        if ($role == 1){
+            $roleDel = 2;
+        }else{
+            $roleDel = 1;
+        }
+
+        $user = $this->auth->findById($_POST['id']);
+        $roleAjout = $this->auth->findRoleById($role);
+        $roleSuppr = $this->auth->findRoleById($roleDel);
+
+        $user->roles()->detach($roleSuppr);
+        $user->roles()->attach($roleAjout);
+
+       /* $users_data = [];
+
+        foreach($users as $key => $value) {
+            $usr_data = [
+                "user"   => $value 
+            ];
+
+                array_push($users_data, $usr_data);
+        }
+        
+        $data = [
+            "tab" => $users_data
+        ];*/
+
+        return $this->twig->render($response, 'app/admin.twig', $data);
+    }
 
 }

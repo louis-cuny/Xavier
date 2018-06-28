@@ -1,0 +1,67 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+
+<div class="container">
+    <h3 >Tous les utilisateurs</h3>
+    
+    <ul class="list-group">
+{% if auth.check() %}
+{% if auth.inRole('admin') %}
+        {% if tab %}
+            {% for users in tab %}
+                {% for user in users %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span><b>{{ user.username }}</b></span>
+                        <form id="{{ user.id }}" action="{{ path_for('changeAdmin') }}" style="position:relative"> <cont>{{ user.roles[0].name }}</cont> <button type="button" onclick="changeUser(this)">Changer!</button>
+                            <input style="visibility:hidden;position:absolute" type="number" name="id" value="{{ user.id }}" required>
+                            <input id="role{{ user.id }}" style="visibility:hidden;position:absolute" name="role" type="number" value="{{ user.roles[0].id }}" required></form>
+                    <!--<span class="badge">                        
+                        <a href="{{ path_for('comments', { "id": seq.id }) }}" class="btn btn-primary">
+                            <i class="fa fa-eye"></i>-->
+                        </a>                              
+                    </span>
+                </li>
+                {% endfor %}
+            {% endfor %}
+        {% else %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Il n'y a pas encore d'utilisateurs 
+            </li>
+        {% endif %}
+{% else %}
+    <p>Vous n'êtez pas autorisé à consulter cette page.</p>
+{% endif %}
+{% endif %}
+    </ul>    
+
+    <br>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+    <script>
+    function changeUser(e){
+        var idchamp = 'role'+$(e).parent().attr('id');
+        if($(e).parent().find('cont').text() == 'Admin'){
+            $(e).parent().find('cont').text('User');
+            $('#'+idchamp).prop('bite','oui');
+
+            /*$.ajax({  
+                type: "POST",  
+                url: "{{ path_for('changeAdmin') }}",  // is this correct?
+                data: $('#' +idchamp).serialize(),  // what data should go there?
+                success: function() {  
+                 // role changé
+                }  
+            });*/
+
+        }else{
+            $(e).parent().find('cont').text('Admin');
+            $('#'+idchamp).val(1);
+        }
+        
+    }
+    </script>
+{% endblock %}

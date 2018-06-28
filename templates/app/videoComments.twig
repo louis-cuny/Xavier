@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block body %}
-
+{{ csrf() }}
     <div class="container">
         {% if isAdmin %}
             <h1><b>{{ video_name }}</b> ({{ name }})</h1>

@@ -65,3 +65,11 @@ $app->post('/xml', 'app.controller:xmlExport')
 $app->get('/vue_d_ensemble', 'app.controller:ensemble')
     ->add($container['auth.middleware']())
     ->setName('vueensemble');
+
+$app->get('/administration', 'app.controller:admin')
+    ->add($container['auth.middleware']())
+    ->setName('admin');
+
+$app->post('/change_admin', 'app.controller:changeAdmin')
+    ->add($container['auth.middleware']())
+    ->setName('changeAdmin');
