@@ -66,6 +66,10 @@ $app->get('/vue_d_ensemble', 'app.controller:ensemble')
     ->add($container['auth.middleware']())
     ->setName('vueensemble');
 
+$app->get('/vue_expressions', 'app.controller:expressions')
+    ->add($container['auth.middleware']())
+    ->setName('vueexpressions');
+
 $app->get('/administration', 'app.controller:admin')
     ->add($container['auth.middleware']())
     ->setName('admin');

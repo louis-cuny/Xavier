@@ -104,17 +104,21 @@
                         <p>Veuillez remplir les champs pour créer une expression.</p>
                         <p>Les deux premiers champs sont obligatoires.</p>
 
-                        <span class="input-group">
-                            <input id="sujet" class="form-control" type="text" placeholder="robot">
-                            <input id="action" class="form-control" type="text" placeholder="avance">
-                            <input id="argument" class="form-control" type="text" placeholder="10m">
-                        </span>
+                        <div id="boiteoutils">
+                            <span id="sujets" class="input-group">
+                                <input id="sujet" class="form-control sujet" type="text" placeholder="robot"><button id="addSujet" onclick="addSujet()">+</button>
+                            </span>
+                                <input id="action" class="form-control" type="text" placeholder="avance">
+                            <span id="arguments" class="input-group">
+                                <input id="argument" class="form-control argument" type="text" placeholder="10m"><button id="addArgument" onclick="addArgument()">+</button>
+                            </span>
+                        </div>
 
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-success" onclick="checkCreateExpression()">Créer</button>
-                        <button class="btn btn-danger" data-dismiss="modal">Annuler</a>
+                        <button class="btn btn-danger" data-dismiss="modal" onclick="cleanForm()">Annuler</a>
                     </div>
                 </div>
             </div>
@@ -147,6 +151,23 @@
                 delay: { "hide": 500 }
             })
         })
+
+        function addSujet() {
+            var inpt = '<input class="form-control sujet" type="text" placeholder="robot">';
+            $( "#addSujet" ).before( inpt );
+        }
+
+        function addArgument() {
+            var inpt = '<input class="form-control argument" type="text" placeholder="10m">';
+            $( "#addArgument" ).before( inpt );
+        }
+
+        function cleanForm(){
+            var newform = '<span id="sujets" class="input-group"><input id="sujet" class="form-control sujet" type="text" placeholder="robot"><button id="addSujet" onclick="addSujet()">+</button></span><input id="action" class="form-control" type="text" placeholder="avance"><span id="arguments" class="input-group"><input id="argument" class="form-control argument" type="text" placeholder="10m"><button id="addArgument" onclick="addArgument()">+</button></span>'
+
+            $("#boiteoutils").empty();
+            $("#boiteoutils").append(newform);
+        }
 
         function loadForm(event) {
             event.preventDefault()
@@ -192,11 +213,29 @@
                 return;
             }
 
+            var sujets = '';
+            $(".sujet").each(function() {
+                if($(this).val() != ''){
+                    sujets += $(this).val() +', '
+                }
+                
+            });
+            sujets = sujets.substring(0, sujets.length - 2);
+
+
+            var args = '';
+            $(".argument").each(function() {
+                if($(this).val() != ''){
+                    args += $(this).val() +', '
+                }
+            });
+            args = args.substring(0, args.length - 2);
+
             var list = $('#newLabelList')
 
             var uid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);                    
             var label = $('<p class="item new" draggable="true" data-id="tmp_' + uid + '"></p>')
-            label.append(sujet + '.' + action + '(' + argument + ')')
+            label.append('('+sujets + ').' + action + '(' + args + ')')
             
             list.append(label)
 

@@ -24,6 +24,13 @@ Manager::schema()->create('label', function (Blueprint $table) {
     $table->timestamps();
 });
 
+Manager::schema()->create('mots', function (Blueprint $table) {
+    $table->increments('id');
+    $table->string('type');
+    $table->string('mot');
+    $table->timestamps();
+});
+
 Manager::schema()->create('sequence', function (Blueprint $table) {
     $table->increments('id');
     $table->string('start'); //TODO reprendre le format utilisé par jplayer

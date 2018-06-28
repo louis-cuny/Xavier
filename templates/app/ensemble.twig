@@ -3,7 +3,10 @@
 {% block body %}
 
 <div class="container">
-    <h3 >Toutes les séquences</h3>
+    <div class="row">
+    <h3 class="col-4">Toutes les séquences</h3>
+    <a href="{{ path_for('vueexpressions') }}" class="btn btn-dark offset-6 mb-2">Expressions</a>
+    </div>
     
     <ul class="list-group">
 {% if auth.check() %}

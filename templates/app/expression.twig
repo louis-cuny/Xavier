@@ -1,0 +1,34 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+    <h3 class="col-4">Toutes les expressions</h3>
+    <a href="{{ path_for('vueensemble') }}" class="btn btn-dark offset-6 mb-2">Séquences</a>
+    </div>
+    
+    <ul class="list-group">
+{% if auth.check() %}
+{% if auth.inRole('admin') %}
+        {% if labels %}
+            {% for lab in labels %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span><b>{{ lab.id }} : </b> {{ lab.expression }}</span>
+                </li>
+            {% endfor %}
+        {% else %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Il n'y a pas encore d'expressions en pseudo-langage
+            </li>
+        {% endif %}
+{% else %}
+    <p>Vous n'êtez pas autorisé à consulter cette page.</p>
+{% endif %}
+{% endif %}
+    </ul>    
+
+    <br>
+</div>
+
+{% endblock %}

@@ -346,8 +346,19 @@ class AppController extends Controller
                 }
                 else
                 {
+                    $labels_data = Label::where('expression', '=' ,$seq->content)->first();
+                    if(count($labels_data)){
+                        $newSeq->label_id = $labels_data->id;
+                    }else{
+                        $newLabel = new Label();
+                        $newLabel->expression = $seq->content;
+                        $newLabel->save();
+
+                        // On l'attribue à notre nouvelle séquence
+                        $newSeq->label_id = $newLabel->id;
+                    }
                     // Cas où le label a été créé dynamiquement
-                    if(! array_key_exists($idSeq[1], $tmpId))
+                    /*if(! array_key_exists($idSeq[1], $tmpId))
                     {
                         // Cas ou le label n'existe pas encore
                         // On crée le label en bdd
@@ -365,7 +376,7 @@ class AppController extends Controller
                     {
                         // Cas ou on a créer le label lors d'une itération précédente
                         $newSeq->label_id = $tmpId[$idSeq[1]];                        
-                    }
+                    }*/
                     
                 }
 
@@ -513,6 +524,26 @@ class AppController extends Controller
         return $this->twig->render($response, 'app/ensemble.twig', $data);
     }
 
+    public function expressions(Request $request, Response $response)
+    {
+
+        $labels_data = Label::all();
+        $labels = [];
+        foreach($labels_data as $label)
+        {
+            $labels[] = [
+                'id' => $label->id,
+                'expression' => $label->expression
+            ];
+        }
+
+        $data = [
+            "labels" =>  $labels
+        ];
+
+        return $this->twig->render($response, 'app/expression.twig', $data);
+    }
+
     public function admin(Request $request, Response $response)
     {
 
@@ -536,23 +567,24 @@ class AppController extends Controller
 
     public function changeAdmin(Request $request, Response $response)
     {
-        $role = $_Post['role'];
-        $roleDel = 0;
+        $role = $_POST['role'];
+        $roleAdd = 0;
 
         if ($role == 1){
-            $roleDel = 2;
+            $roleAdd = 2;
         }else{
-            $roleDel = 1;
+            $roleAdd = 1;
         }
 
         $user = $this->auth->findById($_POST['id']);
-        $roleAjout = $this->auth->findRoleById($role);
-        $roleSuppr = $this->auth->findRoleById($roleDel);
+        $roleAjout = $this->auth->findRoleById($roleAdd);
+        $roleSuppr = $this->auth->findRoleById($role);
 
         $user->roles()->detach($roleSuppr);
         $user->roles()->attach($roleAjout);
 
-       /* $users_data = [];
+       /*$users = $this->auth->getUserRepository()->with('roles')->get();
+        $users_data = [];
 
         foreach($users as $key => $value) {
             $usr_data = [
@@ -564,9 +596,11 @@ class AppController extends Controller
         
         $data = [
             "tab" => $users_data
-        ];*/
+        ];
+        
 
-        return $this->twig->render($response, 'app/admin.twig', $data);
+        return $this->twig->render($response, 'app/admin.twig', $data);*/
+        return $this->redirect($response, 'admin');
     }
 
 }
