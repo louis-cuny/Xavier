@@ -35,6 +35,11 @@
                     margin-right: 5px;
                 }
 
+                #boitexp {
+                    max-height:35vh;
+                    overflow: auto;
+                }
+
             </style>
     {% endblock %}
 {% block body %}
@@ -49,7 +54,7 @@
             <div class="col-md-4 align-top">
                 <ul class="list-group">
                     <li class="list-group-item active text-center">Boîte à outils</li>
-                    <li class="list-group-item">
+                    <li class="list-group-item" id="boitexp">
 
                         {% for label in labels %}
                             <p class="item" draggable="true" data-id="{{ label.id }}">{{ label.expression }}</p> 
@@ -91,7 +96,7 @@
     <!-- Modal pour créer une nouvelle expression -->
     <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel"
              aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Créer une expression</h5>
@@ -104,21 +109,50 @@
                         <p>Veuillez remplir les champs pour créer une expression.</p>
                         <p>Les deux premiers champs sont obligatoires.</p>
 
-                        <span class="input-group">
-                            <input id="sujet" class="form-control" type="text" placeholder="robot">
-                            <input id="action" class="form-control" type="text" placeholder="avance">
-                            <input id="argument" class="form-control" type="text" placeholder="10m">
-                        </span>
+                        <div id="boiteoutils">
+                            <span id="sujets" class="input-group">
+                                <input id="sujet" list="suj" class="form-control sujet mr-1 mb-1" type="text" placeholder="sujet"><button id="addSujet" class="btn btn-dark mb-1" onclick="addSujet()">+</button>
+                            </span>
+                                <input id="action" list="vb" class="form-control mb-1" type="text" placeholder="verbe">
+                            <span id="arguments" class="input-group">
+                                <input id="argument" list="arg" class="form-control argument mr-1" type="text" placeholder="cible/complément"><button id="addArgument" class="btn btn-dark" onclick="addArgument()">+</button>
+                            </span>
+                        </div>
 
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-success" onclick="checkCreateExpression()">Créer</button>
-                        <button class="btn btn-danger" data-dismiss="modal">Annuler</a>
+                        <button class="btn btn-danger" data-dismiss="modal" onclick="cleanForm()">Annuler</a>
                     </div>
                 </div>
             </div>
         </div>
+
+<datalist id="suj">
+    {% for mot in mots %}
+        {% if mot.type =='sujet' %}
+            <option value="{{ mot.mot }}">
+        {% endif %}
+    {% endfor %}
+</datalist>
+
+<datalist id="vb">
+    {% for mot in mots %}
+        {% if mot.type =='verbe' %}
+            <option value="{{ mot.mot }}">
+        {% endif %}
+    {% endfor %}
+</datalist>
+
+<datalist id="arg">
+    {% for mot in mots %}
+        {% if mot.type =='argument' %}
+            <option value="{{ mot.mot }}">
+        {% endif %}
+    {% endfor %}
+</datalist>
+
 {% endblock %}
 {% block javascript %}
     <script type="text/javascript" src="{{ asset('/assets/js/bootstrap-slider.min.js') }}"></script>
@@ -147,6 +181,23 @@
                 delay: { "hide": 500 }
             })
         })
+
+        function addSujet() {
+            var inpt = '<input class="form-control sujet mr-1 mb-1" list="suj" type="text" placeholder="sujet">';
+            $( "#addSujet" ).before( inpt );
+        }
+
+        function addArgument() {
+            var inpt = '<input class="form-control argument mr-1" list="arg" type="text" placeholder="cible/complément">';
+            $( "#addArgument" ).before( inpt );
+        }
+
+        function cleanForm(){
+            var newform = '<span id="sujets" class="input-group"><input id="sujet" list="suj" class="form-control sujet mr-1 mb-1" type="text" placeholder="sujet"><button id="addSujet" class="btn btn-dark mb-1" onclick="addSujet()">+</button></span><input id="action" list="vb" class="form-control mb-1" type="text" placeholder="verbe"><span id="arguments" class="input-group"><input id="argument" list="arg" class="form-control argument mr-1" type="text" placeholder="cible/complément"><button id="addArgument" class="btn btn-dark" onclick="addArgument()">+</button></span>'
+
+            $("#boiteoutils").empty();
+            $("#boiteoutils").append(newform);
+        }
 
         function loadForm(event) {
             event.preventDefault()
@@ -192,11 +243,28 @@
                 return;
             }
 
+            var sujets = '';
+            $(".sujet").each(function() {
+                if($(this).val() != ''){
+                    sujets += $(this).val() +', '
+                } 
+            });
+            sujets = sujets.substring(0, sujets.length - 2);
+
+
+            var args = '';
+            $(".argument").each(function() {
+                if($(this).val() != ''){
+                    args += $(this).val() +', '
+                }
+            });
+            args = args.substring(0, args.length - 2);
+
             var list = $('#newLabelList')
 
             var uid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);                    
             var label = $('<p class="item new" draggable="true" data-id="tmp_' + uid + '"></p>')
-            label.append(sujet + '.' + action + '(' + argument + ')')
+            label.append('('+sujets + ').' + action + '(' + args + ')')
             
             list.append(label)
 

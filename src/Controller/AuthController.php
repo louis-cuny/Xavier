@@ -42,7 +42,7 @@ class AuthController extends Controller
             $username = $request->getParam('username');
             $email = $request->getParam('email');
             $password = $request->getParam('password');
-            $admin = $request->getParam('admin') ? true : false;
+            $admin = false;
             $this->validator->request($request, [
                 'username' => V::length(3, 25)->alnum('_')->noWhitespace(),
                 'email' => V::noWhitespace()->email(),
@@ -87,6 +87,7 @@ class AuthController extends Controller
     public function logout(Request $request, Response $response)
     {
         $this->auth->logout();
+        $this->flash('success', 'Vous vous êtes déconnecté avec succès.');
         return $this->redirect($response, 'home');
     }
 }

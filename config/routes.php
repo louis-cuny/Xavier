@@ -28,6 +28,10 @@ $app->post('/rename/video/{id}', 'app.controller:renameVideo')
     ->add($container['auth.middleware']())
     ->setName('renameVideo');
 
+$app->post('/visible/video/{id}', 'app.controller:visibleVideo')
+    ->add($container['auth.middleware']())
+    ->setName('visibleVideo');
+
 $app->get('/delete/sequence/{id}', 'app.controller:deleteSequence')
     ->add($container['auth.middleware']())
     ->setName('deleteSequence');
@@ -49,3 +53,27 @@ $app->get('/delete/comment/{id}', 'app.controller:deleteComment')
 $app->map(['GET', 'POST'],'/dashboard/{id}' , 'app.controller:dashboard')
     ->add($container['auth.middleware']())
     ->setName('dashboard');
+
+$app->get('/export', 'app.controller:export')
+    ->add($container['auth.middleware']())
+    ->setName('export');
+
+$app->post('/xml', 'app.controller:xmlExport')
+    ->add($container['auth.middleware']())
+    ->setName('xml');
+
+$app->get('/vue_d_ensemble', 'app.controller:ensemble')
+    ->add($container['auth.middleware']())
+    ->setName('vueensemble');
+
+$app->get('/vue_expressions', 'app.controller:expressions')
+    ->add($container['auth.middleware']())
+    ->setName('vueexpressions');
+
+$app->get('/administration', 'app.controller:admin')
+    ->add($container['auth.middleware']())
+    ->setName('admin');
+
+$app->post('/change_admin', 'app.controller:changeAdmin')
+    ->add($container['auth.middleware']())
+    ->setName('changeAdmin');

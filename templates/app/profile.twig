@@ -8,7 +8,18 @@
     <script src="{{ asset('assets/js/jquery-3.3.1.min.js') }}"></script>
 
     <div class="container">
-        <h1>Profile de {{ auth.user.username }}</h1>
+        <h1>Profil de {{ auth.user.username }}</h1>
+        <br>
+{% if auth.inRole('admin') %}
+        <h2>Mettre en ligne une nouvelle vidéo</h2>
+        <form id="upload" action="{{ path_for('upload') }}" class="dropzone" method="POST">
+            {{ csrf() }}
+
+            <div class="fallback">
+                <input name="file" type="file"/>
+            </div>
+        </form>
+
         <br>
 
         <h2>Mes vidéos</h2>
@@ -27,7 +38,7 @@
 
                             <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                                 <button class="dropdown-item" data-toggle="modal" data-target="#renameVideo"
-                                        data-link="{{ path_for("renameVideo", {"id": v.id}) }}">Modifier le nom
+                                        data-link="{{ path_for("renameVideo", {"id": v.id}) }}">Modifier la vidéo
                                 </button>
                                 <button class="dropdown-item" data-toggle="modal" data-target="#deleteModal"
                                         data-link="{{ path_for("deleteVideo", {"id": v.id}) }}">Supprimer la vidéo
@@ -82,17 +93,6 @@
         {% else %}
             <p>Pas encore de vidéo mise en ligne</p>
         {% endif %}
-
-        <br>
-
-        <h2>Mettre en ligne une nouvelle vidéo</h2>
-        <form id="upload" action="{{ path_for('upload') }}" class="dropzone" method="POST">
-            {{ csrf() }}
-
-            <div class="fallback">
-                <input name="file" type="file"/>
-            </div>
-        </form>
 
         <br>
 
@@ -164,7 +164,9 @@
                             <br><br>
                             Le nom de vidéo sera visible par les autres utilisateurs, alors évitez de donner un nom trop explicite !
                             <br><br>
-                            <input class="form-control" name="newName" value="" placeholder="Nouveau nom" required>
+                            <input class="form-control" name="newName" value="" placeholder="Nouveau nom">
+
+                            <div>Visible aux non-enregistrés ? <input type='checkbox' name='isVisible' {% if v.visible %}checked{% endif %}/></div>
                         </div>
 
                         <div class="modal-footer">
@@ -176,6 +178,21 @@
                 </div>
             </div>
         </div>
+
+{% endif %}
+<h2>Mes commentaires</h2>
+    <ul class="list-group">
+    {% for c in commentaires %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ c.comment }}                         
+            <a href="{{ path_for('comments', { "id": c.sequence_id }) }}" class="btn btn-primary">
+                            <i class="fa fa-eye"></i>
+            </a>   
+        </li>
+    {% else %}
+    <p>Pas encore de commentaire.</p>
+    {% endfor %}
+    </ul>
 
         <script>
           // Setting Dropzone.js options

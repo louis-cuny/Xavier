@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block body %}
-
+{{ csrf() }}
     <div class="container">
         {% if isAdmin %}
             <h1><b>{{ video_name }}</b> ({{ name }})</h1>
@@ -51,6 +51,7 @@
         </div>
 
         {% if not isAdmin %}
+            {% if not commented %}
             <form action="{{ path_for('addComment', {"id": id}) }}" method="post">
                 {{ csrf() }}
                 <div class="form-group">
@@ -60,6 +61,12 @@
                     <input type="submit" class="btn btn-lg btn-primary" value="Envoyer">
                 </div>
             </form>
+            {% else %}
+                <br>
+                <h3>Mon commentaire :</h3>
+                <p>{{ your_comment }}</p>
+                <!--<p><i>Vous avez déjà commenter cette vidéo. Pour assurer les données, seuls les adminastrateurs du site peuvent manipuler vos commentaires.</i></p>-->
+            {% endif %}    
         {% endif %}
         
         <!-- Modal when trying to delete a video -->
@@ -84,7 +91,7 @@
                 </div>
             </div>
         </div>
-
+    </div>
         <script>
             $(document).ready(function() 
             {
@@ -95,7 +102,7 @@
                     let modal = $(this)
                     modal.find('.delete-btn').attr("href", recipient)
                 });
-            })
+            });
         </script>    
     </div>
 {% endblock %}
@@ -113,6 +120,6 @@
           let videoEnd = document.getElementById("video-end").value
           setVideo("{{ name }}", videoLink, videoStart, videoEnd)
           initialize()
-        })
+        });
     </script>
 {% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+    <h3 class="col-4">Toutes les séquences</h3>
+    <a href="{{ path_for('vueexpressions') }}" class="btn btn-dark offset-6 mb-2">Expressions</a>
+    </div>
+    
+    <ul class="list-group">
+{% if auth.check() %}
+{% if auth.inRole('admin') %}
+        {% if sequences %}
+            {% for seq in sequences %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span><b>{{ seq.name }}</b> ({{ seq.duration }}s)</span>
+                        
+                    <span class="badge">                        
+                        <a href="{{ path_for('comments', { "id": seq.id }) }}" class="btn btn-primary">
+                            <i class="fa fa-eye"></i>
+                        </a>                              
+                    </span>
+                </li>
+            {% endfor %}
+        {% else %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Il n'y a pas encore de séquences 
+            </li>
+        {% endif %}
+{% else %}
+    <p>Vous n'êtez pas autorisé à consulter cette page.</p>
+{% endif %}
+{% endif %}
+    </ul>    
+
+    <br>
+</div>
+
+{% endblock %}

@@ -62,13 +62,15 @@ DB::table('role_users')->insert([
 \App\Model\Video::insert([
     [
         'id' => 2,
-        'name' => 'Atlas walking',
+        'name' => 'Présentation Atlas',
         'link' => 'assets/videos/5ab904a765de6',
+        'estVisible' => false,
         'user_id' => 1
     ], [
         'id' => 3,
-        'name' => 'Atlas jumping',
+        'name' => 'Capacité Atlas',
         'link' => 'assets/videos/5ab904bc83752',
+        'estVisible' => true,
         'user_id' => 1
     ]
 ]);
