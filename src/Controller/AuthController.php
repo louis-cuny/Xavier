@@ -42,7 +42,7 @@ class AuthController extends Controller
             $username = $request->getParam('username');
             $email = $request->getParam('email');
             $password = $request->getParam('password');
-            $admin = $request->getParam('admin') ? true : false;
+            $admin = false;
             $this->validator->request($request, [
                 'username' => V::length(3, 25)->alnum('_')->noWhitespace(),
                 'email' => V::noWhitespace()->email(),

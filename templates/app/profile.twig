@@ -11,6 +11,17 @@
         <h1>Profil de {{ auth.user.username }}</h1>
         <br>
 {% if auth.inRole('admin') %}
+        <h2>Mettre en ligne une nouvelle vidéo</h2>
+        <form id="upload" action="{{ path_for('upload') }}" class="dropzone" method="POST">
+            {{ csrf() }}
+
+            <div class="fallback">
+                <input name="file" type="file"/>
+            </div>
+        </form>
+
+        <br>
+
         <h2>Mes vidéos</h2>
 
         {% if videos %}
@@ -82,17 +93,6 @@
         {% else %}
             <p>Pas encore de vidéo mise en ligne</p>
         {% endif %}
-
-        <br>
-
-        <h2>Mettre en ligne une nouvelle vidéo</h2>
-        <form id="upload" action="{{ path_for('upload') }}" class="dropzone" method="POST">
-            {{ csrf() }}
-
-            <div class="fallback">
-                <input name="file" type="file"/>
-            </div>
-        </form>
 
         <br>
 

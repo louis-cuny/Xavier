@@ -12,6 +12,7 @@ use App\Model\User;
 use App\Model\Sequence;
 use App\Model\Comment;
 use App\Model\Label;
+use App\Model\Mots;
 
 class AppController extends Controller
 {
@@ -339,6 +340,49 @@ class AppController extends Controller
                 
                 $idSeq = explode('_', $seq->id);
 
+                $str = explode('.', $seq->content);
+                //$str[0] = (a,b,v);
+                $sujets = preg_match('#\((.*?)\)#', $str[0], $match);
+                //$match[1] = a,b,v
+                $sujet = explode(',', $match[1]);
+                //$sujet[0] = a;
+                //$sujet[1] = b;
+                //$sujet[2] = c;
+                foreach ($sujet as $mot) {
+                     //echo "$value <br>";
+                     $mot_db = Mots::where('mot', '=' ,$mot)->first();
+                      if(!count($mot_db)){
+                        $newMot = new Mots();
+                        $newMot->type = 'sujet';
+                        $newMot->mot = $mot;
+                        $newMot->save();
+                    }
+                }
+                //$str[1] = verbe(a,b);
+                $verbe = explode('(', $str[1]);
+                //$verbe[0] = verbe;
+                $mot_db = Mots::where('mot', '=' ,$verbe[0])->first();
+                 if(!count($mot_db)){
+                        $newMot = new Mots();
+                        $newMot->type = 'verbe';
+                        $newMot->mot = $verbe[0];
+                        $newMot->save();
+                    }
+                $argus = preg_match('#\((.*?)\)#', $str[1], $argums);
+                //$argums[1] = a,b
+                $res = explode(',', $argums[1]);
+                //$res[0] = a ;
+                //$res[1} = b;
+                foreach ($res as $mot) {
+                     $mot_db = Mots::where('mot', '=' ,$mot)->first();
+                      if(!count($mot_db)){
+                        $newMot = new Mots();
+                        $newMot->type = 'argument';
+                        $newMot->mot = $mot;
+                        $newMot->save();
+                    }
+                }
+
                 if($idSeq[0] === 'db')
                 {
                     // Cas où le label vient de la db
@@ -357,26 +401,6 @@ class AppController extends Controller
                         // On l'attribue à notre nouvelle séquence
                         $newSeq->label_id = $newLabel->id;
                     }
-                    // Cas où le label a été créé dynamiquement
-                    /*if(! array_key_exists($idSeq[1], $tmpId))
-                    {
-                        // Cas ou le label n'existe pas encore
-                        // On crée le label en bdd
-                        $newLabel = new Label();
-                        $newLabel->expression = $seq->content;
-                        $newLabel->save();
-
-                        // On l'attribue à notre nouvelle séquence
-                        $newSeq->label_id = $newLabel->id;
-
-                        // On l'ajoute à la liste des id tmp
-                        $tmpId[$idSeq[1]] = $newLabel->id;
-                    }
-                    else
-                    {
-                        // Cas ou on a créer le label lors d'une itération précédente
-                        $newSeq->label_id = $tmpId[$idSeq[1]];                        
-                    }*/
                     
                 }
 
@@ -417,6 +441,17 @@ class AppController extends Controller
             ];
         }
 
+        $mots_data = Mots::all();
+        $mots = [];
+        foreach($mots_data as $mot)
+        {
+            $mots[] = [
+                'id' =>  $mot->id,
+                'type' => $mot->type,
+                'mot' => $mot->mot
+            ];
+        }
+
         return $this->twig->render(
             $response,
             'app/dashboard.twig',
@@ -424,7 +459,8 @@ class AppController extends Controller
                 'id'   => $video->id,
                 'name' => $video->name,
                 'link' => $video->link,
-                'labels' => $labels
+                'labels' => $labels,
+                'mots' => $mots
             ]
         );
     }
@@ -443,10 +479,11 @@ class AppController extends Controller
                 array_push($comments, ["id" => $com->id, "comment" => $com->comment]);
             }
 
+            $lbl = Label::where('id', '=' ,$sequences[$i]->label_id)->first();
+
             $seq_data = [
                 "id" => $sequences[$i]->id,
-                "name" => $sequences[$i]->name,
-                "expression" => $sequences[$i]->expression,
+                "label" => $lbl,
                 "comments" => $comments
             ];
 

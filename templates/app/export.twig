@@ -10,14 +10,14 @@
         <ul class="list-group">
             {% if sequences %}
                 {% for seq in sequences %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        {{ seq.expression }} <input type="checkbox">
+                    <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                        {{ seq.label.expression }} <input type="checkbox" param="{{ seq.label.expression }}" onchange="changeBoite(this)" checked>
                     </li>
                         <ul>
                             {% if seq.comments %}
                                 {% for com in seq.comments %}
-                                <li>
-                                    {{ com.comment }} <input id=" {{ com.id }}" type="checkbox" name="{{ seq.expression }}[]" value="{{ com.comment }}">
+                                <li name="{{ seq.label.expression }}" class="col-11">
+                                    <name>{{ com.comment }}</name> <input id=" {{ com.id }}" type="checkbox" name="{{ seq.label.expression }}" value="{{ com.comment }}" checked class="pull-right">
                                 </li>
                                 {% endfor %}
                             {% else %}
@@ -39,4 +39,14 @@
         <button type="submit" class="btn btn-lg btn-primary" style="color: white">Générer XML</button>
 </form>
 
+{% endblock %}
+
+{% block javascript %}
+    <script>
+
+    function changeBoite(e){
+        var nom = $(e).attr('param');
+        $('input[name="'+nom+'"]').prop('checked',$(e).prop('checked'));
+    }
+    </script>
 {% endblock %}
