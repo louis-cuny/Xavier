@@ -67,7 +67,7 @@ class AuthController extends Controller
             }
             if ($this->validator->isValid()) {
                 /** @var \Cartalyst\Sentinel\Roles\EloquentRole $role */
-                $role = $admin ? $this->auth->findRoleByName('Admin') : $this->auth->findRoleByName('User');
+                $role = $this->auth->findRoleByName('User');
                 $user = $this->auth->registerAndActivate([
                     'username' => $username,
                     'email' => $email,
