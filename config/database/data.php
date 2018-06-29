@@ -31,15 +31,15 @@ DB::table('role_users')->insert([
 \App\Model\Label::insert([
     [
         'id' => 1, 
-        'expression' => 'atlas.ouvre(porte)',
+        'expression' => '(atlas).ouvre(porte)',
     ],
     [
         'id' => 2, 
-        'expression' => 'atlas.prends(boîte)',
+        'expression' => '(atlas).prends(boîte)',
     ],
     [
         'id' => 3, 
-        'expression' => 'atlas.marche()',
+        'expression' => '(atlas).marche()',
     ]
 ]);
 
