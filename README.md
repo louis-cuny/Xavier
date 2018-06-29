@@ -5,14 +5,14 @@
 
 
 ## Installation
+
+### Clone our project using git and modify the .env file to your needs
+
 ### Create the project using Composer
 ``` bash
 $ composer install
 ```
 
-### Setup environment variables
-
-Copy `.env.dist` to a `.env` file and change the values to your needs. This file is ignored by Git so all developers working on the project can have their own configuration.
 
 ### Download client-side libraries
 ``` bash
@@ -44,7 +44,10 @@ $ gulp
 The skeleton uses a cache system for Twig templates and the Monolog library for logging, so you have to make sure that PHP has write permissions on the `var/cache/` and `var/log/` directories.
 
 ### Update your database schema
-First, create a database with the name you set in the `.env` file. Then you can create the tables by running this command:
+First, create a database with the name you set in the `.env` (usually Xavier) file. Then you can create the tables by running this command:
 ``` bash
 $ php bin/console db
 ```
+
+You can contact us here if you have troubles with our project !
+Luc, Allan & Louis
